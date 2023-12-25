@@ -1,0 +1,13 @@
+# Main .gitignore file
+
+# Include frontend rules
+#include frontend.gitignore
+
+# Include backend rules
+include backend.gitignore
+
+# Include socket rules
+#include socket.gitignore
+
+# Additional rules for the main .gitignore file
+# ...
