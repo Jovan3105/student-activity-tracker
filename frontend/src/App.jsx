@@ -5,17 +5,21 @@ import Main from "./Pages/Main"
 import { Container, Navbar } from "react-bootstrap";
 import NavBar from "./Components/NavBar";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useContext } from "react";
+import { AuthContext } from "./Context/AuthContext";
 
 function App() {
 
+  const { user } = useContext(AuthContext);
+
   return (
     <>
-    <NavBar></NavBar>
+      <NavBar></NavBar>
       <Container>
         <Routes>
-          <Route path="/" element={<Main></Main>}></Route>
-          <Route path="/register" element={<Register></Register>}></Route>
-          <Route path="/login" element={<Login></Login>}></Route>
+          <Route path="/" element={user ? <Main></Main> : <Login></Login>}></Route>
+          <Route path="/register" element={user ? <Main></Main> : <Register></Register>}></Route>
+          <Route path="/login" element={user ? <Main></Main> : <Login></Login>}></Route>
           <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
         </Routes>
       </Container>
