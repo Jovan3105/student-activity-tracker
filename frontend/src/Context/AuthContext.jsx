@@ -42,6 +42,11 @@ export const AuthContextProvider = ({ children }) => {
         setUser(JSON.parse(user));
     }, []);
 
+    const logoutUser = useCallback(() => {
+        localStorage.removeItem("User");
+        setUser(null);
+    }, []);
+
 
     return <AuthContext.Provider value={{
         user,
@@ -49,7 +54,8 @@ export const AuthContextProvider = ({ children }) => {
         loginError,
         loginInfo,
         updateLoginInfo,
-        isLoginLoading
+        isLoginLoading,
+        logoutUser
     }}>
         {children}
     </AuthContext.Provider>
