@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userRoute = require("./Routes/userRoute");
+const quizRoute = require("./Routes/quizRoute");
 
 const app = express();
 require("dotenv").config();
@@ -9,6 +10,7 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cors());
 app.use("/api/users", userRoute);
+app.use("/api/quizes", quizRoute);
 
 const port = process.env.PORT || 5000;
 const connectionString = process.env.DATABASE_URL + "/" + process.env.DATABASE_NAME;
