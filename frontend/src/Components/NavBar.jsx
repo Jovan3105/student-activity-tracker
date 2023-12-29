@@ -9,11 +9,11 @@ const NavBar = () => {
     return (
         <Navbar bg="light" className="mb-4" style={{ height: "3.75rem" }}>
             <Container>
-                <h2>
+                <h5>
                     <Link to="/" className="link-dark text-decoration-none">
                         Activity Tracker
                     </Link>
-                </h2>
+                </h5>
                 {
                     user &&
                     <span className="text-warning">
@@ -23,16 +23,23 @@ const NavBar = () => {
                 <Nav>
                     <Stack direction="horizontal" gap={3}>
                         {
-                            user ? <Link to="/login" onClick={logoutUser} className="link-light text-decoration-none">
-                                Logout
-                            </Link> : <>
-                                <Link to="/login" className="link-light text-decoration-none">
-                                    Login
-                                </Link>
-                                <Link to="/register" className="link-light text-decoration-none">
-                                    Register
-                                </Link>
-                            </>
+                            user ? (
+                                <Stack direction="horizontal" gap={3}>
+                                    {user?.role === 0 ? <Link to="/quizes" className="link-dark text-decoration-none">
+                                        Quizes
+                                    </Link> : ""}
+                                    <Link to="/login" onClick={logoutUser} className="link-dark text-decoration-none">
+                                        Logout
+                                    </Link>
+                                </Stack>) :
+                                <>
+                                    <Link to="/login" className="link-dark text-decoration-none">
+                                        Login
+                                    </Link>
+                                    <Link to="/register" className="link-dark text-decoration-none">
+                                        Register
+                                    </Link>
+                                </>
                         }
                     </Stack>
                 </Nav>

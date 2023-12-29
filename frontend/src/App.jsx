@@ -7,6 +7,7 @@ import NavBar from "./Components/NavBar";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useContext } from "react";
 import { AuthContext } from "./Context/AuthContext";
+import Quizes from "./Pages/Quizes/Quizes";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={user ? <Main></Main> : <Login></Login>}></Route>
           <Route path="/register" element={user ? <Main></Main> : <Register></Register>}></Route>
           <Route path="/login" element={user ? <Main></Main> : <Login></Login>}></Route>
+          <Route path="/quizes" element={user?.role === 0 ? <Quizes></Quizes> : <Navigate to="/"></Navigate>}></Route>
           <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
         </Routes>
       </Container>
