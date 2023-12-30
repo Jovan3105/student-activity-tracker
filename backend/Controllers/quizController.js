@@ -3,7 +3,7 @@ const Quiz = require("../Models/quizModel");
 
 const createQuiz = async (req, res) => {
 
-    const { name, description, backgroundImage, creatorId, pointsPerQuestion, questionList } = req.body;
+    const { name, description, backgroundImage, creatorId, creatorName, pointsPerQuestion, questionList } = req.body;
 
     const quiz = new Quiz(
         {
@@ -11,7 +11,7 @@ const createQuiz = async (req, res) => {
             description,
             backgroundImage,
             creatorId,
-            //creatorName,
+            creatorName,
             pointsPerQuestion,
             numberOfQuestions: questionList.length,
             questionList
