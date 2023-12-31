@@ -2,10 +2,12 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { baseUrl, getRequest, postRequest } from "../../utils/services";
 import IndividualQuiz from "../../Components/IndividualQuiz";
+import { useNavigate } from "react-router-dom";
 
 const Quizes = () => {
 
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [quizes, setQuizes] = useState([]);
     const [quizData, setQuizData] = useState({
         name: "",
@@ -21,16 +23,16 @@ const Quizes = () => {
     }
 
 
-    //console.log(quizData);
+    //console.log(quizData.questionList.length);
+    console.log(quizData);
+    const submitQuiz = useCallback(async () => {
 
-    const submitQuiz = useCallback(async (quizData) => {
-
-        if (quizData.description === "") {
-            return console.log("Missing quiz description.");
+        if (quizData.description.length < 1) {
+            return window.alert("Missing quiz description.")
         }
 
-        if (quizData.name === "") {
-            return console.log("Missing quiz name.")
+        if (quizData.name.length < 1) {
+            return window.alert("Missing quiz name.");
         }
 
 
@@ -51,8 +53,11 @@ const Quizes = () => {
             return console.log(response.error);
         }
 
+        //console.log("response", response);
+        navigate(`/quizes/${response._id}`);
 
-    }, []);
+    }, [quizData]);
+
 
     useEffect(() => {
         const getQuizes = async () => {
@@ -79,17 +84,15 @@ const Quizes = () => {
                             <h4 className="text-center">Create new quiz</h4>
                         </div>
                         <div className="card-body">
-                            <form>
-                                <div className="form-group">
-                                    <label>Title:</label>
-                                    <input type="text" className="form-control" placeholder="Enter title" />
-                                </div>
-                                <div className="form-group">
-                                    <label>Description:</label>
-                                    <input type="text" className="form-control" placeholder="Enter description" />
-                                </div>
-                                <button type="submit" className="btn btn-primary btn-block mt-1">Submit</button>
-                            </form>
+                            <div className="form-group">
+                                <label>Name:</label>
+                                <input type="text" className="form-control" placeholder="Enter title" name="name" value={quizData?.name} onChange={updateQuiz} />
+                            </div>
+                            <div className="form-group">
+                                <label>Description:</label>
+                                <input type="text" className="form-control" placeholder="Enter description" name="description" value={quizData?.description} onChange={updateQuiz} />
+                            </div>
+                            <button className="btn btn-primary btn-block mt-1" onClick={submitQuiz}>Submit</button>
                         </div>
                     </div>
                 </div>
@@ -98,7 +101,7 @@ const Quizes = () => {
             <div className="row justify-content-center">
                 <div className="col-md-10">
                     <div className="card">
-                        <div className="card-body custom-list overflow-auto"  style={{maxHeight:"60vw"}}>
+                        <div className="card-body custom-list overflow-auto" style={{ maxHeight: "60vw" }}>
                             {
                                 quizes.map((quiz) => (
                                     <IndividualQuiz key={quiz._id} quiz={quiz}></IndividualQuiz>
@@ -109,9 +112,6 @@ const Quizes = () => {
                 </div>
             </div>
             <br></br>
-            <style>
-                
-            </style>
         </div>
     );
 }
