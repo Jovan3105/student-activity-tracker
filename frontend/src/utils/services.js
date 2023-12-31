@@ -47,3 +47,25 @@ export const getRequest = async (url) => {
 
     return data;
 };
+
+export const deleteRequest = async (url) => {
+
+    const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('DELETE request successful:', data);
+        })
+        .catch(error => {
+            console.error('Error during DELETE request:', error);
+        });
+};

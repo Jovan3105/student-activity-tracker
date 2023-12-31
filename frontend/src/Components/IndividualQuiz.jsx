@@ -1,7 +1,7 @@
 import moment from "moment"
 import { useEffect, useState } from "react";
-import { baseUrl, getRequest } from "../utils/services";
-import { useNavigate } from "react-router-dom";
+import { baseUrl, deleteRequest, getRequest } from "../utils/services";
+import { json, useNavigate } from "react-router-dom";
 
 const IndividualQuiz = ({ quiz }) => {
 
@@ -20,13 +20,25 @@ const IndividualQuiz = ({ quiz }) => {
         navigate(`/quizes/${quiz._id}`);
     }
 
+    const deleteQuiz = async (id) => {
+        console.log(id);
+
+        const isConfirmed = window.confirm('Are you sure you want to delete this item?');
+
+        if (isConfirmed) {
+            const response = await deleteRequest(`${baseUrl}/quizes/${id}`);
+            window.location.reload(true);
+        }
+
+    }
+
     //console.log(quiz?.creatorId);
     //console.log(creatorName);
     return (
         <div className="container">
             <div className="card m-3">
                 <div className="row">
-                    <div className="col-md-4" style={{backgroundImage: "url("+quiz?.backgroundImage+")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center"}}>
+                    <div className="col-md-4" style={{ backgroundImage: "url(" + quiz?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
                         {/* <img src={quiz?.backgroundImage} className="img-fluid" alt="Responsive Image" /> */}
                     </div>
 
@@ -49,7 +61,7 @@ const IndividualQuiz = ({ quiz }) => {
                             <br />
                             <button type="button" className="btn btn-secondary mb-2" onClick={modifyQuiz}>Modify</button>
                             <br />
-                            <button type="button" className="btn btn-danger mb-2">Delete</button>
+                            <button type="button" className="btn btn-danger mb-2" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
 
                         </div>
                     </div>

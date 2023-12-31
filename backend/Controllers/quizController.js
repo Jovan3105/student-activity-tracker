@@ -51,4 +51,19 @@ const getQuiz = async (req, res) => {
     }
 }
 
-module.exports = { createQuiz, getQuiz, getQuizes };
+const deleteQuiz = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).send(`No quiz with id: ${id}`)
+    }
+
+    try {
+        await Quiz.findOneAndDelete({ _id: id })
+        res.json("Quiz deleted succesfully")
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+module.exports = { createQuiz, getQuiz, getQuizes, deleteQuiz };
