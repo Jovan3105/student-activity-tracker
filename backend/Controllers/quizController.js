@@ -66,4 +66,32 @@ const deleteQuiz = async (req, res) => {
     }
 }
 
-module.exports = { createQuiz, getQuiz, getQuizes, deleteQuiz };
+const updateQuiz = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).send(`No quiz with id: ${id}`)
+    }
+
+    const { name, description, backgroundImage, questionList } = req.body;
+
+    const quiz = new Quiz(
+        {
+            _id: id,
+            name,
+            backgroundImage,
+            description,
+            numberOfQuestions: questionList.length,
+            questionList
+        }
+    )
+
+    try {
+        const updatedQuiz = await Quiz.findByIdAndUpdate(id, quiz)
+        res.json(updatedQuiz)
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
+
+module.exports = { createQuiz, getQuiz, getQuizes, deleteQuiz, updateQuiz };

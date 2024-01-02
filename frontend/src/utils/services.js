@@ -69,3 +69,26 @@ export const deleteRequest = async (url) => {
             console.error('Error during DELETE request:', error);
         });
 };
+
+export const patchRequest = async (url, body) => {
+
+    const response = await fetch(url, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('PATCH request successful:', data);
+        })
+        .catch(error => {
+            console.error('Error during PATCH request:', error);
+        });
+};

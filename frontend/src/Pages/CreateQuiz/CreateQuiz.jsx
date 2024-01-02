@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
-import { baseUrl, getRequest } from "../../utils/services";
+import { useNavigate, useParams } from "react-router-dom";
+import { baseUrl, getRequest, patchRequest } from "../../utils/services";
 import { useEffect, useRef, useState } from "react";
 
 const CreateQuiz = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const { id } = useParams();
+    const navigate = useNavigate();
     const [quizData, setQuizData] = useState({
         name: "",
         creatorName: `${user?.name}`,
@@ -42,6 +43,11 @@ const CreateQuiz = () => {
 
         //console.log(response)
     }, [])
+
+    const submitQuiz = (e) => {
+        const response = patchRequest(`${baseUrl}/quizes/${id}`, quizData);
+        navigate("/quizes");
+    }
 
     useEffect(() => {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,10 +98,31 @@ const CreateQuiz = () => {
             <div className="col-md-6">
                 <div className="card">
                     <div className="card-header">
-                        <h4 className="text-center">Create new quiz</h4>
+                        <h4 className="text-center">Create new question</h4>
                     </div>
                     <div className="card-body">
-                        <button className="btn btn-primary btn-block mt-1">Submit</button>
+                        <div className="row">
+                            <input className="text-center mx-auto w-75 form-control" type="text" name="question" placeholder="Enter your question"></input>
+                        </div>
+                        <div className="row p-3">
+                            <div className="card">
+                                <h4 className="text-center">Import image</h4>
+                                <div className="card-body">
+                                    <input type="text" className="form-control" placeholder="Enter question image URL" name="backgroundImage" />
+
+                                </div>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="d-flex flex-row pb-3 pt-3">
+                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>&nbsp;
+                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>
+                            </div>
+                            <div className="d-flex flex-row">
+                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>&nbsp;
+                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,10 +181,10 @@ const CreateQuiz = () => {
                         <span>Description</span>
                         <input type="text" className="form-control" placeholder="Enter description" name="description" value={quizData?.description} onChange={changeQuizProperties} />
                         <span>Image url</span>
-                        <input type="text" className="form-control" placeholder="Enter background image URL" name="backgroundImage" value={quizData?.backgroundImage} onChange={changeQuizProperties} />
+                        <input type="text" className="form-control" placeholder="Enter background image URL" name="backgroundImage" value={quizData?.backgroundImage} onInput={changeQuizProperties} />
                         {/* Image url is the current solution for uploading images */}
                         <div className="row mx-auto w-75">
-                            <button className="btn btn-primary btn-block mt-2">Save</button>
+                            <button className="btn btn-primary btn-block mt-2" onClick={submitQuiz}>Save & Exit</button>
                             <button className="btn btn-danger btn-block mt-2">Discard</button>
                         </div>
                     </div>
