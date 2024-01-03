@@ -17,6 +17,7 @@ const CreateQuiz = () => {
     })
     const scroll = useRef();
 
+    const [isQuestionTrueFalse, setIsQuestionTrueFalse] = useState(false);
     const [questionData, setQuestionData] = useState({
         questionIndex: 1,
         question: "",
@@ -61,6 +62,10 @@ const CreateQuiz = () => {
         setQuestionData({ ...questionData, [e.target.name]: parseInt(e.target.value) })
         //console.log(questionData)
     }
+    const changeQuestionStrings = (e) => {
+        setQuestionData({ ...questionData, [e.target.name]: e.target.value })
+        //console.log(questionData)
+    }
 
     const cutText = (text) => {
         let shortText = text.substring(0, 20);
@@ -69,6 +74,36 @@ const CreateQuiz = () => {
             shortText = shortText + "...";
         }
         return shortText;
+    };
+
+    const changeQuestionType = () => {
+
+        setIsQuestionTrueFalse((prev) => !prev);
+
+        if (!isQuestionTrueFalse) {
+            // removes last two unnecessary elements if it is True/False type
+            questionData.answerList.splice(2, 2);
+        }
+        else {
+            questionData.answerList.push({ name: "c", body: "", isCorrect: false });
+            questionData.answerList.push({ name: "d", body: "", isCorrect: false });
+        }
+
+        questionData.answerList[0].body = "True";
+        questionData.answerList[1].body = "False";
+        questionData.answerList.forEach((answer) => (answer.isCorrect = false));
+    }
+
+    const changeQuestionAnswer = (name, body, index) => {
+        setQuestionData((prev) => {
+            const updatedAnswerList = [
+                ...prev.answerList.slice(0, index),
+                { name, body, isCorrect: prev.answerList[index].isCorrect },
+                ...prev.answerList.slice(index + 1),
+            ];
+
+            return { ...prev, answerList: updatedAnswerList };
+        });
     };
 
     //console.log(quizData);
@@ -102,26 +137,35 @@ const CreateQuiz = () => {
                     </div>
                     <div className="card-body">
                         <div className="row">
-                            <input className="text-center mx-auto w-75 form-control" type="text" name="question" placeholder="Enter your question"></input>
+                            <input className="text-center mx-auto w-75 form-control" type="text" name="question" placeholder="Enter your question" onChange={(e) => changeQuestionStrings(e)}></input>
                         </div>
                         <div className="row p-3">
                             <div className="card">
                                 <h4 className="text-center">Import image</h4>
                                 <div className="card-body">
-                                    <input type="text" className="form-control" placeholder="Enter question image URL" name="backgroundImage" />
-
+                                    {(questionData?.backgroundImage.includes(".jpg")) &&
+                                        <>
+                                            <div className="mx-auto" style={{ backgroundImage: "url(" + questionData?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center", height: "200px" }}></div>
+                                            <br></br>
+                                        </>
+                                    }
+                                    <input type="text" className="form-control" placeholder="Enter question image URL (only JPG format)" name="backgroundImage" onInput={(e) => changeQuestionStrings(e)} />
                                 </div>
                             </div>
                         </div>
                         <div className="row">
                             <div className="d-flex flex-row pb-3 pt-3">
-                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>&nbsp;
-                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="a" value={questionData.answerList[0].body}
+                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "True", 0) : changeQuestionAnswer(e.target.name, e.target.value, 0) }}>
+                                </input>&nbsp;
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="b" value={questionData.answerList[1].body}
+                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "False", 1) : changeQuestionAnswer(e.target.name, e.target.value, 1) }}>
+                                </input>
                             </div>
-                            <div className="d-flex flex-row">
-                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>&nbsp;
-                                <input type="text" className="form-control w-50" placeholder="Answer 1"></input>
-                            </div>
+                            {!isQuestionTrueFalse && <div className="d-flex flex-row">
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="c" value={questionData.answerList[2].body} onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 2)}></input>&nbsp;
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="d" value={questionData.answerList[3].body} onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 3)}></input>
+                            </div>}
                         </div>
                     </div>
                 </div>
@@ -139,7 +183,7 @@ const CreateQuiz = () => {
                     <div className="card-body">
                         <h6><u>For current question</u></h6>
                         <span>Question type</span>&nbsp;
-                        <select className="form-select" name="questionType" onChange={changeQuestionProperties}>
+                        <select className="form-select" name="questionType" onChange={(e) => { changeQuestionProperties(e); changeQuestionType() }}>
                             <option defaultValue disabled>
                                 Select question type
                             </option>
@@ -168,7 +212,7 @@ const CreateQuiz = () => {
                                 30sec
                             </option>
                             <option value={60}>
-                                1sec
+                                1min
                             </option>
                             <option value={90}>
                                 1,5min
