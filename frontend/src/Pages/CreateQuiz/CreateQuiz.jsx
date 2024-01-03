@@ -18,6 +18,7 @@ const CreateQuiz = () => {
     const scroll = useRef();
 
     const [isQuestionTrueFalse, setIsQuestionTrueFalse] = useState(false);
+    const [answerCount, setAnswerCount] = useState(0);
     const [questionData, setQuestionData] = useState({
         questionIndex: 1,
         question: "",
@@ -92,6 +93,8 @@ const CreateQuiz = () => {
         questionData.answerList[0].body = "True";
         questionData.answerList[1].body = "False";
         questionData.answerList.forEach((answer) => (answer.isCorrect = false));
+        // after chaning question type we also need to reset the value back to 0
+        setAnswerCount(0);
     }
 
     const changeQuestionAnswer = (name, body, index) => {
@@ -106,9 +109,34 @@ const CreateQuiz = () => {
         });
     };
 
+    const setIsCorrectAnswer = (index) => {
+        setQuestionData((prev) => {
+            const updatedAnswerList = prev.answerList.map((answer, i) => {
+                if (i === index) {
+                    return {
+                        name: answer.name,
+                        body: answer.body,
+                        isCorrect: !answer.isCorrect,
+                    };
+                }
+                return answer;
+            });
+
+            return {
+                ...prev,
+                answerList: updatedAnswerList,
+            };
+        });
+
+        setAnswerCount((prev) => {
+            return questionData.answerList[index].isCorrect ? prev - 1 : prev + 1;
+        });
+    };
+
     //console.log(quizData);
     //console.log(user);
     //console.log(questionData)
+    //console.log(answerCount)
     return (
         <div className="row justify-content-center">
             <div className="col-md-3 mb-3">
@@ -156,15 +184,27 @@ const CreateQuiz = () => {
                         <div className="row">
                             <div className="d-flex flex-row pb-3 pt-3">
                                 <input type="text" className="form-control w-50" placeholder="Answer 1" name="a" value={questionData.answerList[0].body}
-                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "True", 0) : changeQuestionAnswer(e.target.name, e.target.value, 0) }}>
+                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "True", 0) : changeQuestionAnswer(e.target.name, e.target.value, 0) }}
+                                    onClick={() => { (questionData.answerList[0].isCorrect || answerCount < 1) && setIsCorrectAnswer(0) }}
+                                    style={questionData.answerList[0].isCorrect ? { border: "3px solid green" } : { border: "" }}>
                                 </input>&nbsp;
                                 <input type="text" className="form-control w-50" placeholder="Answer 1" name="b" value={questionData.answerList[1].body}
-                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "False", 1) : changeQuestionAnswer(e.target.name, e.target.value, 1) }}>
+                                    onChange={(e) => { isQuestionTrueFalse ? changeQuestionAnswer(e.target.name, "False", 1) : changeQuestionAnswer(e.target.name, e.target.value, 1) }}
+                                    onClick={() => { (questionData.answerList[1].isCorrect || answerCount < 1) && setIsCorrectAnswer(1) }}
+                                    style={questionData.answerList[1].isCorrect ? { border: "3px solid green" } : { border: "" }}>
                                 </input>
                             </div>
                             {!isQuestionTrueFalse && <div className="d-flex flex-row">
-                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="c" value={questionData.answerList[2].body} onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 2)}></input>&nbsp;
-                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="d" value={questionData.answerList[3].body} onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 3)}></input>
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="c" value={questionData.answerList[2].body}
+                                    onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 2)}
+                                    onClick={() => { (questionData.answerList[2].isCorrect || answerCount < 1) && setIsCorrectAnswer(2) }}
+                                    style={questionData.answerList[2].isCorrect ? { border: "3px solid green" } : { border: "" }}>
+                                </input>&nbsp;
+                                <input type="text" className="form-control w-50" placeholder="Answer 1" name="d" value={questionData.answerList[3].body}
+                                    onChange={(e) => changeQuestionAnswer(e.target.name, e.target.value, 3)}
+                                    onClick={() => { (questionData.answerList[3].isCorrect || answerCount < 1) && setIsCorrectAnswer(3) }}
+                                    style={questionData.answerList[3].isCorrect ? { border: "3px solid green" } : { border: "" }}>
+                                </input>
                             </div>}
                         </div>
                     </div>
