@@ -52,6 +52,10 @@ const CreateQuiz = () => {
         navigate("/quizes");
     }
 
+    const discardQuiz = (e) => {
+        navigate("/quizes");
+    }
+
     useEffect(() => {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
     }, []);
@@ -301,7 +305,7 @@ const CreateQuiz = () => {
                         {/* Image url is the current solution for uploading images */}
                         <div className="row mx-auto w-75">
                             <button className="btn btn-primary btn-block mt-2" onClick={submitQuiz}>Save & Exit</button>
-                            <button className="btn btn-danger btn-block mt-2">Discard</button>
+                            <button className="btn btn-danger btn-block mt-2" onClick={discardQuiz}>Discard</button>
                         </div>
                     </div>
                 </div>
