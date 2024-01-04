@@ -16,13 +16,14 @@ const CreateQuiz = () => {
         questionList: [],
     })
     const scroll = useRef();
+    const inputRef = useRef(null);
 
     const [isQuestionTrueFalse, setIsQuestionTrueFalse] = useState(false);
     const [answerCount, setAnswerCount] = useState(0);
     const [questionData, setQuestionData] = useState({
         questionIndex: 1,
         question: "",
-        questionType: "Quiz",
+        questionType: 1,
         answerTime: 5,
         backgroundImage: "",
         answerList: [
@@ -61,10 +62,16 @@ const CreateQuiz = () => {
     }
     const changeQuestionProperties = (e) => {
         setQuestionData({ ...questionData, [e.target.name]: parseInt(e.target.value) })
+        setQuestionData((prev) => ({
+            ...prev, questionIndex: quizData.questionList.length + 1
+        }))
         //console.log(questionData)
     }
     const changeQuestionStrings = (e) => {
         setQuestionData({ ...questionData, [e.target.name]: e.target.value })
+        setQuestionData((prev) => ({
+            ...prev, questionIndex: quizData.questionList.length + 1
+        }))
         //console.log(questionData)
     }
 
@@ -93,7 +100,7 @@ const CreateQuiz = () => {
         questionData.answerList[0].body = "True";
         questionData.answerList[1].body = "False";
         questionData.answerList.forEach((answer) => (answer.isCorrect = false));
-        // after chaning question type we also need to reset the value back to 0
+        // after changing question type we also need to reset the value back to 0
         setAnswerCount(0);
     }
 
@@ -133,10 +140,35 @@ const CreateQuiz = () => {
         });
     };
 
+    const addQuestion = () => {
+
+        setQuizData((prev) => ({
+            ...prev,
+            questionList: [...prev.questionList, questionData],
+        }));
+
+        setQuestionData({
+            questionIndex: quizData.questionList.length + 1,
+            question: "",
+            questionType: 1,
+            answerTime: 5,
+            backgroundImage: "",
+            answerList: [
+                { name: "a", body: "", isCorrect: false },
+                { name: "b", body: "", isCorrect: false },
+                { name: "c", body: "", isCorrect: false },
+                { name: "d", body: "", isCorrect: false },
+            ]
+        });
+
+        setAnswerCount(0);
+        inputRef.current.value = "";
+    };
+
     //console.log(quizData);
     //console.log(user);
-    //console.log(questionData)
-    //console.log(answerCount)
+    console.log(questionData)
+    console.log(quizData.questionList.length)
     return (
         <div className="row justify-content-center">
             <div className="col-md-3 mb-3">
@@ -147,13 +179,13 @@ const CreateQuiz = () => {
                     <div className="card-body custom-list overflow-auto" style={{ maxHeight: "35vw" }}>
                         {
                             quizData.questionList.length > 0 && quizData.questionList.map((question) => (
-                                <div className="card-header border" key={question.questionIndex} ref={scroll}>
+                                <div className="card-header border mt-2" key={question.questionIndex} ref={scroll}>
                                     <span>{question.question}</span>
                                 </div>
                             ))
                         }
                         <div className="row mx-auto w-75">
-                            <button className=" btn btn-primary btn-block mt-2">Add question</button>
+                            <button className={(questionData?.question === "" || answerCount == 0) ? "btn btn-primary btn-block mt-2 disabled" : "btn btn-primary btn-block mt-2"} onClick={addQuestion}>Add question</button>
                         </div>
                     </div>
                 </div>
@@ -165,7 +197,7 @@ const CreateQuiz = () => {
                     </div>
                     <div className="card-body">
                         <div className="row">
-                            <input className="text-center mx-auto w-75 form-control" type="text" name="question" placeholder="Enter your question" onChange={(e) => changeQuestionStrings(e)}></input>
+                            <input ref={inputRef} className="text-center mx-auto w-75 form-control" type="text" name="question" placeholder="Enter your question" onChange={(e) => changeQuestionStrings(e)}></input>
                         </div>
                         <div className="row p-3">
                             <div className="card">
