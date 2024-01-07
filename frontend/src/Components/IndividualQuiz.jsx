@@ -1,6 +1,6 @@
 import moment from "moment"
-import { useEffect, useState } from "react";
-import { baseUrl, deleteRequest, getRequest } from "../utils/services";
+import { useCallback, useEffect, useState } from "react";
+import { baseUrl, deleteRequest, getRequest, postRequest } from "../utils/services";
 import { json, useNavigate } from "react-router-dom";
 
 const IndividualQuiz = ({ quiz }) => {
@@ -32,6 +32,23 @@ const IndividualQuiz = ({ quiz }) => {
 
     }
 
+    const startGame = useCallback(async () => {
+        const response = await postRequest(`${baseUrl}/games/`, JSON.stringify(
+            {
+                quizId: quiz._id,
+                isActive: true,
+                pin: Math.floor(Math.random() * 9000) + 1000,
+            }
+        ));
+
+        if (response.error) {
+            return console.log(response.error);
+        }
+
+        navigate(`/games/host/${response._id}`);
+        
+    });
+
     //console.log(quiz?.creatorId);
     //console.log(creatorName);
     return (
@@ -57,7 +74,7 @@ const IndividualQuiz = ({ quiz }) => {
 
                     <div className="col-md-2 d-flex justify-content-center ">
                         <div className="mt-2 mb-2">
-                            <button type="button" className="btn btn-primary mb-2">Start</button>
+                            <button type="button" className="btn btn-primary mb-2" onClick={startGame}>Start</button>
                             <br />
                             <button type="button" className="btn btn-secondary mb-2" onClick={modifyQuiz}>Modify</button>
                             <br />

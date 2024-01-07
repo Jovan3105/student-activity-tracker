@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const gameSchema = new mongoose.Schema({
     hostId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     quizId: { type: mongoose.Schema.Types.ObjectId, ref: "Quiz", required: true },
-    pin: { type: String },
+    pin: { type: Number },
     isActive: { type: Boolean, default: false },
     players: [
         {
