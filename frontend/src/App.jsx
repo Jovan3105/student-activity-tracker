@@ -10,6 +10,7 @@ import { AuthContext } from "./Context/AuthContext";
 import Quizes from "./Pages/Quizes/Quizes";
 import CreateQuiz from "./Pages/CreateQuiz/CreateQuiz";
 import Host from "./Pages/Game/Host";
+import Join from "./Pages/Game/Join";
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/quizes" element={user?.role === 0 ? <Quizes></Quizes> : <Navigate to="/"></Navigate>}></Route>
           <Route path="/quizes/:id" element={user?.role === 0 ? <CreateQuiz></CreateQuiz> : <Navigate to="/"></Navigate>}></Route>
           <Route path="/games/host/:id" element={user?.role === 0 ? <Host></Host> : <Navigate to="/"></Navigate>}></Route>
+          <Route path="/games/join" element={user?.role === 1 ? <Join></Join> : <Navigate to="/"></Navigate>}></Route>
           <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
         </Routes>
       </Container>

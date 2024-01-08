@@ -28,6 +28,9 @@ const NavBar = () => {
                                     {user?.role === 0 ? <Link to="/quizes" className="link-dark text-decoration-none">
                                         Quizes
                                     </Link> : ""}
+                                    {user?.role === 1 ? <Link to="/games/join" className="link-dark text-decoration-none">
+                                        Play
+                                    </Link> : ""}
                                     <Link to="/login" onClick={logoutUser} className="link-dark text-decoration-none">
                                         Logout
                                     </Link>
