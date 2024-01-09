@@ -7,7 +7,7 @@ include frontend.gitignore
 include backend.gitignore
 
 # Include socket rules
-#include socket.gitignore
+include socket.gitignore
 
 # Additional rules for the main .gitignore file
 # ...
