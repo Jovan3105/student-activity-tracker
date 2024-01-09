@@ -1,4 +1,18 @@
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
+
 const Join = () => {
+    const [socket, setSocket] = useState(null);
+
+    useEffect(() => {
+        const newSocket = io("http://localhost:3000");
+        setSocket(newSocket);
+
+        return () => {
+            newSocket.disconnect();
+        }
+    }, []);
+
     return (
         <div className="row justify-content-center">
             <div className="col-md-5">
