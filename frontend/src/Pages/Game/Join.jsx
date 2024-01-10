@@ -1,18 +1,15 @@
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
+import { useContext, useEffect, useState } from "react";
+import { useSocket } from "../../Context/SocketContext";
 
 const Join = () => {
-    const [socket, setSocket] = useState(null);
+    const user = JSON.parse(localStorage.getItem("User"));
+    const [pin, setPin] = useState(0);
+    const { socket } = useSocket();
 
-    useEffect(() => {
-        const newSocket = io("http://localhost:3000");
-        setSocket(newSocket);
 
-        return () => {
-            newSocket.disconnect();
-        }
-    }, []);
 
+    console.log(socket);
+    //console.log(pin);
     return (
         <div className="row justify-content-center">
             <div className="col-md-5">
@@ -22,10 +19,10 @@ const Join = () => {
                     </div>
                     <div className="card-body">
                         <div className="card-body">
-                            <input type="number" className="form-control text-center" placeholder="Example: 1234"></input>
+                            <input type="number" className="form-control text-center" placeholder="Example: 1234" name="pin" value={pin} onChange={(e) => setPin(e.target.value)} ></input>
                         </div>
                         <div className="row mx-auto w-75">
-                            <button className="btn btn-primary btn-block mt-2" >Join</button>
+                            <button className={pin.toString().length !== 4 ? "btn btn-primary btn-block mt-2 disabled" : "btn btn-primary btn-block mt-2 enabled"} >Join</button>
                         </div>
                     </div>
                 </div>
