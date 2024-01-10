@@ -2,11 +2,13 @@ import moment from "moment"
 import { useCallback, useEffect, useState } from "react";
 import { baseUrl, deleteRequest, getRequest, postRequest } from "../utils/services";
 import { json, useNavigate } from "react-router-dom";
+import { useSocket } from "../Context/SocketContext";
 
 const IndividualQuiz = ({ quiz }) => {
 
     //const creatorName = getRequest(`${baseUrl}/users/find/${quiz?.creatorId}`);
     const navigate = useNavigate();
+    const { socket } = useSocket();
     const cutText = (text) => {
         let shortText = text.substring(0, 20);
 
@@ -45,8 +47,10 @@ const IndividualQuiz = ({ quiz }) => {
             return console.log(response.error);
         }
 
+        socket.emit("startGame", response);
+
         navigate(`/games/host/${response._id}`);
-        
+
     });
 
     //console.log(quiz?.creatorId);
