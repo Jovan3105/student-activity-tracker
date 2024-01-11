@@ -6,9 +6,11 @@ const Join = () => {
     const [pin, setPin] = useState(0);
     const { socket } = useSocket();
 
+    const join = () => {
+        socket.emit("addPlayer", user, socket.id, pin);
+    }
 
-
-    console.log(socket);
+    console.log(socket, typeof(pin));
     //console.log(pin);
     return (
         <div className="row justify-content-center">
@@ -19,10 +21,10 @@ const Join = () => {
                     </div>
                     <div className="card-body">
                         <div className="card-body">
-                            <input type="number" className="form-control text-center" placeholder="Example: 1234" name="pin" value={pin} onChange={(e) => setPin(e.target.value)} ></input>
+                            <input type="number" className="form-control text-center" placeholder="Example: 1234" name="pin" value={pin} onChange={(e) => setPin(parseInt(e.target.value))} ></input>
                         </div>
                         <div className="row mx-auto w-75">
-                            <button className={pin.toString().length !== 4 ? "btn btn-primary btn-block mt-2 disabled" : "btn btn-primary btn-block mt-2 enabled"} >Join</button>
+                            <button className={pin.toString().length !== 4 ? "btn btn-primary btn-block mt-2 disabled" : "btn btn-primary btn-block mt-2 enabled"} onClick={join} >Join</button>
                         </div>
                     </div>
                 </div>
