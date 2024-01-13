@@ -4,13 +4,16 @@ import { useSocket } from "../../Context/SocketContext";
 const Join = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const [pin, setPin] = useState(0);
-    const { socket } = useSocket();
+    const { initializeSocket } = useSocket();
+    const [socket, setSocket] = useState(null);
 
     const join = () => {
-        socket.emit("addPlayer", user, socket.id, pin);
+        const socket = initializeSocket();
+        setSocket(socket);
+        socket.emit("addPlayer", user, pin);
     }
 
-    console.log(socket, typeof(pin));
+    console.log(socket, typeof (pin));
     //console.log(pin);
     return (
         <div className="row justify-content-center">

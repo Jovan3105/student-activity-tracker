@@ -14,12 +14,12 @@ io.on("connection", (socket) => {
         game = newGame;
     });
 
-    socket.on("addPlayer", (user, socketId, pin) => {
+    socket.on("addPlayer", (user, pin) => {
         //console.log(typeof (game.pin), typeof (pin));
         if (game.pin == pin) {
 
-            if (!players.some((player) => player.socketId === socketId)) {
-                players.push({ userName: user.name, socketId });
+            if (!players.some((player) => player._id === user._id)) {
+                players.push({ name: user.name, _id: user._id });
             }
             else {
                 console.log("User already added.");

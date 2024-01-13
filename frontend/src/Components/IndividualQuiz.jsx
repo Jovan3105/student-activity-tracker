@@ -8,7 +8,7 @@ const IndividualQuiz = ({ quiz }) => {
 
     //const creatorName = getRequest(`${baseUrl}/users/find/${quiz?.creatorId}`);
     const navigate = useNavigate();
-    const { socket } = useSocket();
+    const { initializeSocket } = useSocket();
     const cutText = (text) => {
         let shortText = text.substring(0, 20);
 
@@ -46,12 +46,12 @@ const IndividualQuiz = ({ quiz }) => {
         if (response.error) {
             return console.log(response.error);
         }
-
+        const socket = initializeSocket()
         socket.emit("startGame", response);
 
         navigate(`/games/host/${response._id}`);
 
-    });
+    }, [initializeSocket, navigate, quiz._id]);
 
     //console.log(quiz?.creatorId);
     //console.log(creatorName);

@@ -7,14 +7,21 @@ const Host = () => {
     const [gameData, setGameData] = useState(null);
 
     useEffect(() => {
-        const response = getRequest(`${baseUrl}/games/${id}`).then((value) => {
-            setGameData(value);
-        });
+        const fetchData = async () => {
+            try {
+                const response = await getRequest(`${baseUrl}/games/${id}`);
+                if (response.error) {
+                    console.error(response.error);
+                } else {
+                    setGameData(response);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
 
-        if (response.error) {
-            return console.log(response.error);
-        }
-    }, []);
+        fetchData();
+    }, [id]);
 
     console.log(gameData);
     return (
