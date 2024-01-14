@@ -29,6 +29,8 @@ io.on("connection", (socket) => {
             console.log(players)
             //console.log("addPlayer true")
             socket.join(game.pin);
+            let player = players.find((player) => player._id === user._id);
+            io.emit("addedPlayer", player);
         } else {
             console.log("There is no corresponding pin.")
         }
