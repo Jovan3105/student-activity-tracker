@@ -14,7 +14,7 @@ io.on("connection", (socket) => {
         game = newGame;
     });
 
-    socket.on("addPlayer", (user, pin) => {
+    socket.on("addPlayer", (user, pin, error) => {
         //console.log(typeof (game.pin), typeof (pin));
         if (game.pin == pin) {
 
@@ -22,7 +22,7 @@ io.on("connection", (socket) => {
                 players.push({ name: user.name, _id: user._id });
             }
             else {
-                console.log("User already added.");
+                error('User already added.');
                 return;
             }
 
@@ -32,7 +32,7 @@ io.on("connection", (socket) => {
             let player = players.find((player) => player._id === user._id);
             io.emit("addedPlayer", player);
         } else {
-            console.log("There is no corresponding pin.")
+            error('No matching pin.'); 
         }
     });
 
