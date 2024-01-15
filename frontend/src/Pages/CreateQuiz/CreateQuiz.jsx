@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { baseUrl, getRequest, patchRequest } from "../../utils/services";
 import { useEffect, useRef, useState } from "react";
+import "./style.css";
 
 const CreateQuiz = () => {
     const user = JSON.parse(localStorage.getItem("User"));
@@ -169,6 +170,42 @@ const CreateQuiz = () => {
         inputRef.current.value = "";
     };
 
+    const removeQuestion = (index) => {
+
+        const isConfirmed = window.confirm('Are you sure you want to delete this item?');
+
+        if (isConfirmed) {
+            setQuizData((prev) => ({
+                ...prev,
+                questionList: [
+                    ...prev.questionList.slice(0, index - 1),
+                    ...prev.questionList.slice(index, prev.questionList.length),
+                ],
+            }));
+
+            quizData.questionList.forEach((question) => {
+                if (question.questionIndex > index) {
+                    question.questionIndex -= 1;
+                }
+            });
+
+            setQuestionData({
+                questionIndex: 1,
+                question: "",
+                questionType: 1,
+                answerTime: 5,
+                backgroundImage: "",
+                answerList: [
+                    { name: "a", body: "", isCorrect: false },
+                    { name: "b", body: "", isCorrect: false },
+                    { name: "c", body: "", isCorrect: false },
+                    { name: "d", body: "", isCorrect: false },
+                ]
+            });
+        }
+
+    }
+
     //console.log(quizData);
     //console.log(user);
     console.log(questionData)
@@ -184,7 +221,17 @@ const CreateQuiz = () => {
                         {
                             quizData.questionList.length > 0 && quizData.questionList.map((question) => (
                                 <div className="card-header border mt-2" key={question.questionIndex} ref={scroll}>
-                                    <span>{question.question}</span>
+                                    <div className="row">
+                                        <div className="col-md-10">
+                                            <span>{question.question}</span>
+                                        </div>
+                                        <div className="col-md-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" onClick={() => removeQuestion(question.questionIndex)} width="16" height="16" fill="currentColor" className="bi bi-trash deleteQuestionButton" viewBox="0 0 16 16">
+                                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             ))
                         }
