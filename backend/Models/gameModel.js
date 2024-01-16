@@ -10,6 +10,12 @@ const gameSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
         }
+    ],
+    playerGameplays: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "PlayerGameplay",
+        },
     ]
 }, {
     timestamps: true

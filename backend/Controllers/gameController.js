@@ -3,7 +3,7 @@ const Game = require("../Models/gameModel");
 
 const createGame = async (req, res) => {
 
-    const { hostId, quizId, pin, isActive, players } = req.body
+    const { hostId, quizId, pin, isActive, players, playerGameplays } = req.body
 
     const game = new Game(
         {
@@ -11,7 +11,8 @@ const createGame = async (req, res) => {
             quizId,
             pin,
             isActive,
-            players
+            players,
+            playerGameplays
         }
     )
 
