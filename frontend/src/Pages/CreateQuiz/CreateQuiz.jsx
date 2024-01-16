@@ -2,6 +2,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { baseUrl, getRequest, patchRequest } from "../../utils/services";
 import { useEffect, useRef, useState } from "react";
 import "./style.css";
+import { Alert } from "react-bootstrap";
+
 
 const CreateQuiz = () => {
     const user = JSON.parse(localStorage.getItem("User"));
@@ -19,6 +21,7 @@ const CreateQuiz = () => {
     const scroll = useRef();
     const inputRef = useRef(null);
 
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
     const [isQuestionTrueFalse, setIsQuestionTrueFalse] = useState(false);
     const [answerCount, setAnswerCount] = useState(0);
     const [questionData, setQuestionData] = useState({
@@ -50,11 +53,14 @@ const CreateQuiz = () => {
 
     const submitQuiz = (e) => {
         const response = patchRequest(`${baseUrl}/quizes/${id}`, quizData);
+        setHasUnsavedChanges(false);
         navigate("/quizes");
     }
 
     const discardQuiz = (e) => {
-        navigate("/quizes");
+        setHasUnsavedChanges(false);
+        window.location.reload(true);
+        //navigate("/quizes");
     }
 
     useEffect(() => {
@@ -63,6 +69,7 @@ const CreateQuiz = () => {
 
     const changeQuizProperties = (e) => {
         setQuizData({ ...quizData, [e.target.name]: e.target.value })
+        setHasUnsavedChanges(true);
         //console.log(quizData)
     }
     const changeQuestionProperties = (e) => {
@@ -70,6 +77,7 @@ const CreateQuiz = () => {
         setQuestionData((prev) => ({
             ...prev, questionIndex: quizData.questionList.length + 1
         }))
+        setHasUnsavedChanges(true);
         //console.log(questionData)
     }
     const changeQuestionStrings = (e) => {
@@ -77,6 +85,7 @@ const CreateQuiz = () => {
         setQuestionData((prev) => ({
             ...prev, questionIndex: quizData.questionList.length + 1
         }))
+        setHasUnsavedChanges(true);
         //console.log(questionData)
     }
 
@@ -119,6 +128,7 @@ const CreateQuiz = () => {
 
             return { ...prev, answerList: updatedAnswerList };
         });
+        setHasUnsavedChanges(true);
     };
 
     const setIsCorrectAnswer = (index) => {
@@ -143,6 +153,7 @@ const CreateQuiz = () => {
         setAnswerCount((prev) => {
             return questionData.answerList[index].isCorrect ? prev - 1 : prev + 1;
         });
+        setHasUnsavedChanges(true);
     };
 
     const addQuestion = () => {
@@ -168,6 +179,7 @@ const CreateQuiz = () => {
 
         setAnswerCount(0);
         inputRef.current.value = "";
+        setHasUnsavedChanges(true);
     };
 
     const removeQuestion = (index) => {
@@ -203,9 +215,11 @@ const CreateQuiz = () => {
                 ]
             });
         }
+        setHasUnsavedChanges(true);
 
     }
 
+    console.log(hasUnsavedChanges);
     //console.log(quizData);
     //console.log(user);
     console.log(questionData)
@@ -241,7 +255,7 @@ const CreateQuiz = () => {
                     </div>
                 </div>
             </div>
-            <div className="col-md-6">
+            <div className="col-md-6 mb-3">
                 <div className="card">
                     <div className="card-header">
                         <h4 className="text-center">Create new question</h4>
@@ -292,8 +306,15 @@ const CreateQuiz = () => {
                         </div>
                     </div>
                 </div>
+                {
+                    hasUnsavedChanges && <Alert variant="warning" className="text-center mt-2 text-justify">
+                        <h5>
+                            You have unsaved changes !!!
+                        </h5>
+                    </Alert>
+                }
             </div>
-            <div className="col-md-3">
+            <div className="col-md-3 mb-3">
                 <div className="card">
                     <div className="card-header d-flex justify-content-center">
                         <h4 className="text-center">Properties</h4>
