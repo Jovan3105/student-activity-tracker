@@ -36,6 +36,10 @@ const Host = () => {
         console.log(players);
     }, [players, socket])
 
+    const startGame = () => {
+        socket.emit("startGame");
+    }
+
 
     console.log(gameData);
     return (
@@ -64,7 +68,7 @@ const Host = () => {
 
                         </div>
                         <div className="row mx-auto w-75">
-                            <button className="btn btn-primary btn-block mt-2" >Start Game</button>
+                            <button className="btn btn-primary btn-block mt-2" onClick={startGame} >Start Game</button>
                         </div>
                     </div>
                 </div>

@@ -1,15 +1,33 @@
 import { useContext, useEffect, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
 import { Alert } from "react-bootstrap";
+import { baseUrl, postRequest } from "../../utils/services";
+import { useNavigate } from "react-router-dom";
 
 const Join = () => {
     const user = JSON.parse(localStorage.getItem("User"));
+    const navigate = useNavigate();
     const [pin, setPin] = useState(0);
     const { initializeSocket } = useSocket();
     const [socket, setSocket] = useState(null);
     const [playerAdded, setPlayerAdded] = useState(false);
     const [errorExists, setErrorExists] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        socket?.on("redirectPlayers", async (gameId) => {
+            const response = await postRequest(`${baseUrl}/playerGameplays/`, JSON.stringify(
+                {
+                    playerId: user._id,
+                    gameId: gameId,
+                    score: 0,
+                    questionList: [],
+                }
+            ));
+
+            navigate(`/games/player/${gameId}`);
+        })
+    }, [socket, user._id, navigate]);
 
     const join = () => {
         const socket = initializeSocket();

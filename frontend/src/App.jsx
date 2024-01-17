@@ -11,6 +11,7 @@ import Quizes from "./Pages/Quizes/Quizes";
 import CreateQuiz from "./Pages/CreateQuiz/CreateQuiz";
 import Host from "./Pages/Game/Host";
 import Join from "./Pages/Game/Join";
+import Player from "./Pages/Game/Player";
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/quizes/:id" element={user?.role === 0 ? <CreateQuiz></CreateQuiz> : <Join></Join>}></Route>
           <Route path="/games/host/:id" element={user?.role === 0 ? <Host></Host> : <Join></Join>}></Route>
           <Route path="/games/join" element={user?.role === 1 ? <Join></Join> : <Navigate to="/"></Navigate>}></Route>
+          <Route path="/games/player/:id" element={user?.role === 1 ? <Player></Player> : <Navigate to="/"></Navigate>}></Route>
           <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
         </Routes>
       </Container>

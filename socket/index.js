@@ -8,7 +8,7 @@ let players = [];
 io.on("connection", (socket) => {
     console.log("new connection", socket.id);
 
-    socket.on("startGame", (newGame) => {
+    socket.on("setupGame", (newGame) => {
         socket.join(newGame.pin);
         console.log("Host: " + socket.id + " Game: " + newGame.pin);
         game = newGame;
@@ -32,9 +32,14 @@ io.on("connection", (socket) => {
             let player = players.find((player) => player._id === user._id);
             io.emit("addedPlayer", player);
         } else {
-            error('No matching pin.'); 
+            error('No matching pin.');
         }
     });
+
+    socket.on("startGame", () => {
+        console.log("Game " + game.pin + " is started");
+        socket.to(game.pin).emit("redirectPlayers", game._id);
+    })
 
 });
 

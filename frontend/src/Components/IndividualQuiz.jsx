@@ -47,7 +47,7 @@ const IndividualQuiz = ({ quiz }) => {
             return console.log(response.error);
         }
         const socket = initializeSocket()
-        socket.emit("startGame", response);
+        socket.emit("setupGame", response);
 
         navigate(`/games/host/${response._id}`);
 
