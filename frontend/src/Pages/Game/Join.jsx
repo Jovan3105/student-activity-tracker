@@ -38,10 +38,8 @@ const Join = () => {
                 setErrorMessage(error);
                 setPlayerAdded(false);
             }
-            else {
-                setPlayerAdded(true);
-            }
         });
+        setPlayerAdded(true);
     }
 
     const closeAlert = () => {
@@ -53,7 +51,7 @@ const Join = () => {
     console.log(socket, typeof (pin));
     //console.log(pin);
     return (
-        <div className="row justify-content-center">
+        <div className="row justify-content-center" style={{ paddingTop: "15%" }}>
             <div className="col-md-5">
                 <div className="card">
                     {!playerAdded ?

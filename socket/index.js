@@ -41,6 +41,10 @@ io.on("connection", (socket) => {
         socket.to(game.pin).emit("redirectPlayers", game._id);
     })
 
+    socket.on("questionCountdown", () => {
+        socket.to(game.pin).emit("questionCountdownFromHost");
+    });
+
 });
 
 io.listen(3000);
