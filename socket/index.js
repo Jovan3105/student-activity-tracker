@@ -41,9 +41,15 @@ io.on("connection", (socket) => {
         socket.to(game.pin).emit("redirectPlayers", game._id);
     })
 
+    // Signal that host sends. Starts the countdown before the questions shows
     socket.on("questionCountdown", () => {
         socket.to(game.pin).emit("questionCountdownFromHost");
     });
+
+    // Signal that host sends. Starts the countdown during the questions
+    socket.on("questionCountdownForPlayer", (time, question) => {
+        socket.to(game.pin).emit("questionCountdownForPlayerFromHost", time, question);
+    })
 
 });
 

@@ -13,7 +13,7 @@ const Host = () => {
     const [isTimerScreen, setIsTimerScreen] = useState(false);
     const [isQuestionScreen, setIsQuestionScreen] = useState(false);
     const [timer, setTimer] = useState(5);
-    const [currentQuestionId, setCurrentQuestionId] = useState(1);
+    const [currentQuestionId, setCurrentQuestionId] = useState(0);
     const [quizData, setQuizData] = useState(null);
 
     const [questionData, setQuestionData] = useState({
@@ -99,8 +99,15 @@ const Host = () => {
 
         let time = quizData.questionList[index].answerTime;
 
+        let question = {
+            answerList: quizData.questionList[index].answerList,
+            questionIndex: quizData.questionList[index].questionIndex
+        }
+
         setTimer(time);
+        socket.emit("questionCountdownForPlayer", time, question);
         countdown(time, currentQuestionId, true);
+
     };
 
     return (
