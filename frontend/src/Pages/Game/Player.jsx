@@ -19,7 +19,7 @@ const Player = () => {
         setIsTimerScreen(true);
         let interval = setInterval(() => {
             setTimer(time--);
-            if (time === 0) {
+            if (time === -1) {
                 clearInterval(interval);
                 setIsQuestionScreen(true);
                 setIsTimerScreen(false);

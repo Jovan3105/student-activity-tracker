@@ -13,6 +13,22 @@ const Host = () => {
     const [isTimerScreen, setIsTimerScreen] = useState(false);
     const [isQuestionScreen, setIsQuestionScreen] = useState(false);
     const [timer, setTimer] = useState(5);
+    const [currentQuestionId, setCurrentQuestionId] = useState(1);
+    const [quizData, setQuizData] = useState(null);
+
+    const [questionData, setQuestionData] = useState({
+        questionIndex: 1,
+        question: "",
+        questionType: 1,
+        answerTime: 5,
+        backgroundImage: "",
+        answerList: [
+            { name: "a", body: "", isCorrect: false },
+            { name: "b", body: "", isCorrect: false },
+            { name: "c", body: "", isCorrect: false },
+            { name: "d", body: "", isCorrect: false },
+        ]
+    })
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,6 +48,19 @@ const Host = () => {
     }, [id]);
 
     useEffect(() => {
+        if (gameData) {
+            const response = getRequest(`${baseUrl}/quizes/${gameData.quizId}`).then((value) => {
+                console.log(value)
+                setQuizData(value);
+            });
+
+            if (response.error) {
+                return console.log(response.error);
+            }
+        }
+    }, [gameData]);
+
+    useEffect(() => {
         const socket = initializeSocket();
         setSocket(socket);
         socket.on("addedPlayer", (player) => {
@@ -43,26 +72,37 @@ const Host = () => {
     const startGame = () => {
         socket.emit("startGame");
         socket.emit("questionCountdown");
-        beforeQuestionCountdown(5);
+        countdown(5, currentQuestionId);
         setIsGameStarted((prev) => !prev);
         setIsTimerScreen(true);
     }
 
-    const beforeQuestionCountdown = (time) => {
+    const countdown = (time, currentQuestionId, duringQuestion = false) => {
         setIsTimerScreen(true);
         let interval = setInterval(() => {
             setTimer(time--);
-            if (time === 0) {
+            if (time === -1) {
                 clearInterval(interval);
-                setIsQuestionScreen(true);
-                setIsTimerScreen(false);
+                if (!duringQuestion) {
+                    showQuestion(currentQuestionId);
+                    setIsQuestionScreen(true);
+                    setIsTimerScreen(false);
+                }
             }
             //console.log(time)
         }, 1000);
     }
 
+    const showQuestion = (index) => {
+        setQuestionData(quizData.questionList[index]);
+        setCurrentQuestionId((prev) => prev + 1);
 
-    console.log(gameData);
+        let time = quizData.questionList[index].answerTime;
+
+        setTimer(time);
+        countdown(time, currentQuestionId, true);
+    };
+
     return (
         <div className="row justify-content-center">
             {!isGameStarted &&
@@ -104,11 +144,45 @@ const Host = () => {
             {isQuestionScreen &&
                 <div className="col-md-5">
                     <div className="card">
-                        <h1 className="text-center">Question with image and answers</h1>
+                        <div className="card-body">
+                            <div className="row">
+                                <div className="text-center mx-auto w-75 form-control">{questionData.question}</div>
+                            </div>
+                            <div className="row p-3">
+                                <div className="card">
+                                    <div className="card-body">
+                                        {questionData?.backgroundImage ?
+                                            <>
+                                                <h4 className="mx-auto text-center card" style={{ width: "10%" }}>{timer}</h4>
+                                                <div className="mx-auto mt-3 rounded" style={{ backgroundImage: "url(" + questionData?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center", height: "200px" }}></div>
+                                                <br></br>
+                                            </>
+                                            : <h2 className="mx-auto text-center card" style={{ width: "10%" }}>{timer}</h2>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="d-flex flex-row pb-3 pt-3">
+                                    <input type="text" className="form-control w-50 border border-danger" placeholder="Answer 1" name="a" readOnly value={questionData.answerList[0].body}>
+                                    </input>&nbsp;
+                                    <input type="text" className="form-control w-50 border-primary" placeholder="Answer 2" name="b" readOnly value={questionData.answerList[1].body}>
+                                    </input>
+                                </div>
+                                {questionData.questionType === 1 &&
+                                    <div className="d-flex flex-row">
+                                        <input type="text" className="form-control w-50 border-success" placeholder="Answer 3" name="c" readOnly value={questionData.answerList[2].body}>
+                                        </input>&nbsp;
+                                        <input type="text" className="form-control w-50 border-warning" placeholder="Answer 4" name="d" readOnly value={questionData.answerList[3].body}>
+                                        </input>
+                                    </div>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
             }
-        </div>
+        </div >
     );
 }
 
