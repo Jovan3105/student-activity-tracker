@@ -48,4 +48,20 @@ const getGame = async (req, res) => {
     }
 }
 
-module.exports = { createGame, getGames, getGame };
+const addPlayer = async (req, res) => {
+    const { gameId } = req.params;
+    const { playerId } = req.body;
+
+    //console.log(gameId, playerId);
+
+    try {
+        const game = await Game.findById(gameId);
+        game.players.push(playerId);
+        const updatedGame = await game.save();
+        res.status(200).send(updatedGame);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+module.exports = { createGame, getGames, getGame, addPlayer };

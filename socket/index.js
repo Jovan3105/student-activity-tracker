@@ -14,15 +14,16 @@ io.on("connection", (socket) => {
         game = newGame;
     });
 
-    socket.on("addPlayer", (user, pin, error) => {
+    socket.on("addPlayer", (user, pin, callback) => {
         //console.log(typeof (game.pin), typeof (pin));
         if (game.pin == pin) {
 
             if (!players.some((player) => player._id === user._id)) {
                 players.push({ name: user.name, _id: user._id });
+                callback("Pass", game._id);
             }
             else {
-                error('User already added.');
+                callback("User already added.", user._id);
                 return;
             }
 
@@ -32,7 +33,7 @@ io.on("connection", (socket) => {
             let player = players.find((player) => player._id === user._id);
             io.emit("addedPlayer", player);
         } else {
-            error('No matching pin.');
+            callback("No matching pin.", game._id);
         }
     });
 

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
 import { Alert } from "react-bootstrap";
-import { baseUrl, postRequest } from "../../utils/services";
+import { baseUrl, patchRequest, postRequest } from "../../utils/services";
 import { useNavigate } from "react-router-dom";
 
 const Join = () => {
@@ -32,14 +32,26 @@ const Join = () => {
     const join = () => {
         const socket = initializeSocket();
         setSocket(socket);
-        socket.emit("addPlayer", user, pin, (error) => {
-            if (error) {
-                setErrorExists(true);
-                setErrorMessage(error);
-                setPlayerAdded(false);
+        socket.emit("addPlayer", user, pin, (callback, gameId) => {
+            if (callback) {
+                if (callback === "Pass") {
+                    //console.log("gameid", gameId)
+                    const response = patchRequest(`${baseUrl}/games/${gameId}/players/`, { playerId: user._id });
+                    setPlayerAdded(true);
+                }
+                else if (callback === "User already added.") {
+                    setErrorExists(true);
+                    setErrorMessage(callback);
+                    setPlayerAdded(false);
+                }
+                else {
+                    setErrorExists(true);
+                    setErrorMessage(callback);
+                    setPlayerAdded(false);
+                }
             }
         });
-        setPlayerAdded(true);
+
     }
 
     const closeAlert = () => {
