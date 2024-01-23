@@ -14,7 +14,7 @@ const Player = () => {
 
     const [answer, setAnswer] = useState({
         questionIndex: 0,
-        answerList: [],
+        answer: null,
         time: 0,
     })
 
@@ -29,21 +29,21 @@ const Player = () => {
             setAnswer((prev) => ({
                 ...prev,
                 questionIndex: question.questionIndex,
-                answerList: [],
+                answer: null,
                 time: 0
             }))
         });
     }, [socket]);
 
     useEffect(() => {
-        if (answer?.answerList.length === 1) {
+        if (answer?.answer) {
             setIsQuestionScreen(false);
             setIsQuestionAnswered(true);
         }
         else {
             setIsQuestionAnswered(false);
         }
-    }, [answer, socket, answer?.answerList.length]);
+    }, [answer, socket, answer?.answer]);
 
 
     const countdown = (time, duringQuestion = false) => {
@@ -63,10 +63,10 @@ const Player = () => {
             }
         }, 1000);
     }
-    const selectAnswer = (name) => {
+    const selectAnswer = (clickedAnswer) => {
         setAnswer((prev) => ({
             ...prev,
-            answerList: [name], // Set the answers array to contain only the selected answer
+            answer: clickedAnswer, // Set the answers array to contain only the selected answer
             time: timeToAnswer,
         }));
     };
@@ -88,13 +88,13 @@ const Player = () => {
                         <div className="card-body">
                             <div className="row">
                                 <div className="d-flex flex-row pb-3 pt-3">
-                                    <button type="text" className="form-control w-50 border border-danger" onClick={() => selectAnswer("a")}>{questionData?.answerList[0].name.toUpperCase()}</button>&nbsp;
-                                    <button type="text" className="form-control w-50 border-primary" onClick={() => selectAnswer("b")}>{questionData?.answerList[1].name.toUpperCase()}</button>
+                                    <button type="text" className="form-control w-50 border border-danger" onClick={() => selectAnswer(questionData?.answerList[0])}>{questionData?.answerList[0].name.toUpperCase()}</button>&nbsp;
+                                    <button type="text" className="form-control w-50 border-primary" onClick={() => selectAnswer(questionData?.answerList[1])}>{questionData?.answerList[1].name.toUpperCase()}</button>
                                 </div>
                                 {questionData?.answerList.length > 2 &&
                                     <div className="d-flex flex-row">
-                                        <button type="text" className="form-control w-50 border-success" onClick={() => selectAnswer("c")}>{questionData?.answerList[2].name.toUpperCase()}</button>&nbsp;
-                                        <button type="text" className="form-control w-50 border-warning" onClick={() => selectAnswer("d")}>{questionData?.answerList[3].name.toUpperCase()}</button>
+                                        <button type="text" className="form-control w-50 border-success" onClick={() => selectAnswer(questionData?.answerList[2])}>{questionData?.answerList[2].name.toUpperCase()}</button>&nbsp;
+                                        <button type="text" className="form-control w-50 border-warning" onClick={() => selectAnswer(questionData?.answerList[3])}>{questionData?.answerList[3].name.toUpperCase()}</button>
                                     </div>
                                 }
                             </div>
