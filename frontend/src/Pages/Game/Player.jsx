@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
+import { baseUrl, getRequest } from "../../utils/services";
+import { useParams } from "react-router-dom";
 
 const Player = () => {
     const { initializeSocket } = useSocket();
@@ -10,6 +12,9 @@ const Player = () => {
     const [timer, setTimer] = useState(5);
     const [questionData, setQuestionData] = useState(null);
     const [timeToAnswer, setTimeToAnswer] = useState(0);
+    const [playerGameplayData, setPlayerGameplayData] = useState(null);
+    const { id } = useParams();
+    const user = JSON.parse(localStorage.getItem("User"));
 
 
     const [answer, setAnswer] = useState({
@@ -44,6 +49,19 @@ const Player = () => {
             setIsQuestionAnswered(false);
         }
     }, [answer, socket, answer?.answer]);
+
+    useEffect(() => {
+        //console.log("id", id);
+        const response = getRequest(`${baseUrl}/playerGameplays/${id}/${user._id}`).then((value) => {
+            //console.log("playerGameplay", value)
+            setPlayerGameplayData(value);
+        });
+
+        if (response.error) {
+            return console.log(response.error);
+        }
+
+    }, [id, user._id]);
 
 
     const countdown = (time, duringQuestion = false) => {

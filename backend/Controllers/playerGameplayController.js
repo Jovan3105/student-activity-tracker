@@ -91,4 +91,28 @@ const addAnswer = async (req, res) => {
     }
 };
 
-module.exports = { createPlayerGameplay, getPlayerGameplays, getPlayerGameplay, addAnswer };
+const getPlayerGameplayByUserAndGame = async (req, res) => {
+    const gameId = req.params.gameId;
+    const playerId = req.params.playerId;
+
+    try {
+        const playerGameplay = await PlayerGameplay.findOne({
+            $and: [
+                { gameId: gameId },
+                { playerId: playerId }
+            ]
+        });
+
+        if (playerGameplay == null) {
+            return res.status(400).json("Player Gameplay not found.")
+        }
+
+        res.status(200).json(playerGameplay);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
+
+module.exports = { createPlayerGameplay, getPlayerGameplays, getPlayerGameplay, addAnswer, getPlayerGameplayByUserAndGame };
