@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
-import { baseUrl, getRequest } from "../../utils/services";
+import { baseUrl, getRequest, patchRequest } from "../../utils/services";
 import { useParams } from "react-router-dom";
 
 const Player = () => {
@@ -15,6 +15,7 @@ const Player = () => {
     const [playerGameplayData, setPlayerGameplayData] = useState(null);
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("User"));
+    const [newPlayerGameplay, setNewPlayerGameplay] = useState(null);
 
 
     const [answer, setAnswer] = useState({
@@ -44,6 +45,7 @@ const Player = () => {
         if (answer?.answer) {
             setIsQuestionScreen(false);
             setIsQuestionAnswered(true);
+            sendAnswer();
         }
         else {
             setIsQuestionAnswered(false);
@@ -89,7 +91,19 @@ const Player = () => {
         }));
     };
 
-    console.log(answer)
+    const sendAnswer = async () => {
+
+        const updatedGameplay = await patchRequest(`${baseUrl}/playerGameplays/${playerGameplayData._id}/answers`, {
+            questionIndex: answer.questionIndex,
+            answer: answer.answer,
+            time: answer.time
+        })
+        //console.log(updatedGameplay.questionList[updatedGameplay.questionList.length - 1]);
+        setNewPlayerGameplay(updatedGameplay.questionList[updatedGameplay.questionList.length - 1]);
+
+    }
+
+    //console.log(answer)
     return (
         <div className="row justify-content-center" style={{ paddingTop: "15%" }}>
             {isTimerScreen &&

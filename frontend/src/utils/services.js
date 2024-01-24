@@ -72,7 +72,7 @@ export const deleteRequest = async (url) => {
 
 export const patchRequest = async (url, body) => {
 
-    const response = await fetch(url, {
+    return await fetch(url, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -87,6 +87,7 @@ export const patchRequest = async (url, body) => {
         })
         .then(data => {
             console.log('PATCH request successful:', data);
+            return data;
         })
         .catch(error => {
             console.error('Error during PATCH request:', error);
