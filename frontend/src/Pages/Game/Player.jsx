@@ -16,6 +16,7 @@ const Player = () => {
     const { id } = useParams();
     const user = JSON.parse(localStorage.getItem("User"));
     const [newPlayerGameplay, setNewPlayerGameplay] = useState(null);
+    const [isAnswerResultScreen, setIsAnswerResultScreen] = useState(false);
 
 
     const [answer, setAnswer] = useState({
@@ -28,10 +29,12 @@ const Player = () => {
         const socket = initializeSocket();
         setSocket(socket);
         socket.on("questionCountdownFromHost");
-        countdown(5);
+        setIsAnswerResultScreen(false);
+        setIsTimerScreen(true);
+        startHostCountdown(5);
         socket.on("questionCountdownForPlayerFromHost", (time, question) => {
             setQuestionData(question);
-            countdown(time, true);
+            startQuestionCountdown(time);
             setAnswer((prev) => ({
                 ...prev,
                 questionIndex: question.questionIndex,
@@ -66,23 +69,43 @@ const Player = () => {
     }, [id, user._id]);
 
 
-    const countdown = (time, duringQuestion = false) => {
-        setIsTimerScreen(true);
-        let seconds = 0;
+    const startCountdown = (seconds, onTick, onComplete) => {
         let interval = setInterval(() => {
-            setTimer(time--);
-            if (!duringQuestion) {
-                setTimeToAnswer(seconds++);
-            }
-            if (time === -1) {
+            onTick(seconds--);
+
+            if (seconds === -1) {
                 clearInterval(interval);
-                if (!duringQuestion) {
-                    setIsQuestionScreen(true);
-                    setIsTimerScreen(false);
-                }
+                onComplete();
             }
+
         }, 1000);
-    }
+    };
+
+    const startHostCountdown = (seconds) => {
+        startCountdown(seconds,
+            (time) => setTimer(time),
+            () => {
+                setIsTimerScreen(false);
+                setIsQuestionScreen(true);
+            }
+        );
+    };
+
+    const startQuestionCountdown = (seconds) => {
+        let answerSeconds = 0;
+
+        startCountdown(seconds,
+            (time) => {
+                setTimer(time);
+                setTimeToAnswer(answerSeconds++);
+            },
+            () => {
+                setIsQuestionScreen(false);
+                setIsQuestionAnswered(false);
+                setIsAnswerResultScreen(true);
+            }
+        );
+    };
     const selectAnswer = (clickedAnswer) => {
         setAnswer((prev) => ({
             ...prev,
@@ -139,6 +162,24 @@ const Player = () => {
                     <div className="card">
                         <div className="card-body">
                             <h4 className="mx-auto text-center card mt-3">Waiting for the timer finish...</h4>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isAnswerResultScreen && (
+                <div className="col-md-5">
+                    <div className="card">
+                        <div className="card-header" style={{ backgroundColor: (!newPlayerGameplay || newPlayerGameplay.points === 0) ? "#FF6868" : "#DCFFB7" }}>
+                            <h4 className="text-center">Result:</h4><br></br>
+                        </div>
+                        <div className="card-body">
+                            <h3 className="mx-auto text-center">
+                                {(!newPlayerGameplay || newPlayerGameplay.points === 0) ?
+                                    <span style={{ color: "#FF6868" }}>Wrong</span> :
+                                    <span style={{ color: "#DCFFB7" }}>Correct</span>}
+                            </h3>
+                            <hr></hr>
+                            <h3 className="text-center"> Points: {newPlayerGameplay?.points}</h3>
                         </div>
                     </div>
                 </div>
