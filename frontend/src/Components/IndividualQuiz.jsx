@@ -35,7 +35,7 @@ const IndividualQuiz = ({ quiz }) => {
     }
 
     const startGame = useCallback(async () => {
-        const response = await postRequest(`${baseUrl}/games/`, JSON.stringify(
+        const game = await postRequest(`${baseUrl}/games/`, JSON.stringify(
             {
                 quizId: quiz._id,
                 isActive: true,
@@ -43,13 +43,25 @@ const IndividualQuiz = ({ quiz }) => {
             }
         ));
 
-        if (response.error) {
-            return console.log(response.error);
+        if (game.error) {
+            return console.log(game.error);
         }
-        const socket = initializeSocket()
-        socket.emit("setupGame", response);
 
-        navigate(`/games/host/${response._id}`);
+        const scoreboard = await postRequest(`${baseUrl}/scoreboards/`, JSON.stringify(
+            {
+                gameId: game._id,
+                playerGameplays: []
+            }
+        ))
+
+        if (scoreboard.error) {
+            return console.log(scoreboard.error);
+        }
+        
+        const socket = initializeSocket()
+        socket.emit("setupGame", game, scoreboard);
+
+        navigate(`/games/host/${game._id}`);
 
     }, [initializeSocket, navigate, quiz._id]);
 

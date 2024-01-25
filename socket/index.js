@@ -4,14 +4,16 @@ const io = new Server({ cors: "http://localhost:5173" });
 
 let game;
 let players = [];
+let scoreboard;
 
 io.on("connection", (socket) => {
     console.log("new connection", socket.id);
 
-    socket.on("setupGame", (newGame) => {
+    socket.on("setupGame", (newGame, newScoreboard) => {
         socket.join(newGame.pin);
         console.log("Host: " + socket.id + " Game: " + newGame.pin);
         game = newGame;
+        scoreboard = newScoreboard;
     });
 
     socket.on("addPlayer", (user, pin, callback) => {
