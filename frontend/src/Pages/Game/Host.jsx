@@ -72,41 +72,64 @@ const Host = () => {
     const startGame = () => {
         socket.emit("startGame");
         socket.emit("questionCountdown");
-        countdown(5, currentQuestionId);
+        startHostCountdown(5, currentQuestionId);
         setIsGameStarted((prev) => !prev);
         setIsTimerScreen(true);
     }
 
-    const countdown = (time, currentQuestionId, duringQuestion = false) => {
-        setIsTimerScreen(true);
+    const startCountdown = (seconds, onTick, onComplete, isPreview) => {
+        setIsTimerScreen(isPreview); // set timer screen state based on the parameter
+        setIsQuestionScreen(!isPreview); // set question screen state based on the parameter
+
         let interval = setInterval(() => {
-            setTimer(time--);
-            if (time === -1) {
+            onTick(seconds--);
+
+            if (seconds === -1) {
                 clearInterval(interval);
-                if (!duringQuestion) {
-                    showQuestion(currentQuestionId);
-                    setIsQuestionScreen(true);
-                    setIsTimerScreen(false);
-                }
+                onComplete();
             }
-            //console.log(time)
+
         }, 1000);
-    }
+    };
+
+    const startHostCountdown = (seconds, index) => {
+        startCountdown(seconds,
+            (time) => setTimer(time),
+            () => {
+                showQuestion(index);
+                setIsTimerScreen(false);
+                setIsQuestionScreen(true);
+            },
+            true  // set isPreview to true for timer countdown
+        );
+    };
+
+    const startQuestionCountdown = (seconds, index) => {
+        startCountdown(seconds,
+            (time) => setTimer(time),
+            () => {
+                startHostCountdown(5, index);
+            },
+            false  // set isPreview to false for question countdown
+        );
+    };
 
     const showQuestion = (index) => {
+        if (index === quizData.questionList.length) {
+            alert("No more questions"); // placeholder
+            return;
+        }
         setQuestionData(quizData.questionList[index]);
         setCurrentQuestionId((prev) => prev + 1);
 
         let time = quizData.questionList[index].answerTime;
 
-        let question = {
+        setTimer(time);
+        socket.emit("questionCountdownForPlayer", time, {
             answerList: quizData.questionList[index].answerList,
             questionIndex: quizData.questionList[index].questionIndex
-        }
-
-        setTimer(time);
-        socket.emit("questionCountdownForPlayer", time, question);
-        countdown(time, currentQuestionId, true);
+        });
+        startQuestionCountdown(time, index + 1);
 
     };
 

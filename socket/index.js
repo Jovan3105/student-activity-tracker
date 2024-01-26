@@ -14,6 +14,7 @@ io.on("connection", (socket) => {
         console.log("Host: " + socket.id + " Game: " + newGame.pin);
         game = newGame;
         scoreboard = newScoreboard;
+        players = [];
     });
 
     socket.on("addPlayer", (user, pin, callback) => {
