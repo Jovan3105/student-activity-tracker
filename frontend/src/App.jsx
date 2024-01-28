@@ -12,13 +12,15 @@ import CreateQuiz from "./Pages/CreateQuiz/CreateQuiz";
 import Host from "./Pages/Game/Host";
 import Join from "./Pages/Game/Join";
 import Player from "./Pages/Game/Player";
+import Footer from "./Components/Footer";
+import "./App.css"
 
 function App() {
 
   const { user } = useContext(AuthContext);
 
   return (
-    <>
+    <div className="mainContainer">
       <NavBar></NavBar>
       <Container>
         <Routes>
@@ -33,7 +35,8 @@ function App() {
           <Route path="*" element={<Navigate to="/"></Navigate>}></Route>
         </Routes>
       </Container>
-    </>
+      <Footer></Footer>
+    </div>
   )
 }
 
