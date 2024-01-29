@@ -6,6 +6,7 @@ const quizRoute = require("./Routes/quizRoute");
 const gameRoute = require("./Routes/gameRoute");
 const playerGameplayRoute = require("./Routes/playerGameplayRoute");
 const scoreboardRoute = require("./Routes/scoreboardRoute");
+const { getSocketInstance } = require("./socket");
 
 const app = express();
 require("dotenv").config();
@@ -29,5 +30,11 @@ app.listen(port, (req, res) => {
     console.log(`Server running on port: ${port}`)
     console.log(connectionString)
 });
+
+try {
+    io = getSocketInstance();
+} catch (error) {
+    console.log(error);
+}
 
 mongoose.connect(connectionString).then(() => console.log("MongoDB connection established")).catch((error) => console.log("MongoDB connection failed: ", error.message))

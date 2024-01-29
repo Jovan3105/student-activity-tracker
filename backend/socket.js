@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
     // Signal that host sends. Starts the countdown before the questions shows
     socket.on("questionCountdown", (callback) => {
         callback();
-        socket.to(game.pin).emit("questionCountdownFromHost"); 
+        socket.to(game.pin).emit("questionCountdownFromHost");
     });
 
     // Signal that host sends. Starts the countdown during the questions
@@ -59,3 +59,12 @@ io.on("connection", (socket) => {
 });
 
 io.listen(3000);
+
+function getSocketInstance() {
+    if (!io) {
+        throw new Error('Socket.IO not initialized.');
+    }
+    return io;
+}
+
+module.exports = { getSocketInstance }
