@@ -71,8 +71,9 @@ const Host = () => {
 
     const startGame = () => {
         socket.emit("startGame");
-        socket.emit("questionCountdown");
-        startHostCountdown(5, currentQuestionId);
+        socket.emit("questionCountdown", () => {
+            startHostCountdown(5, currentQuestionId);
+        });
         setIsGameStarted((prev) => !prev);
         setIsTimerScreen(true);
     }
@@ -108,7 +109,9 @@ const Host = () => {
         startCountdown(seconds,
             (time) => setTimer(time),
             () => {
-                startHostCountdown(5, index);
+                socket.emit("questionCountdown", () => {
+                    startHostCountdown(5, index);
+                })
             },
             false  // set isPreview to false for question countdown
         );

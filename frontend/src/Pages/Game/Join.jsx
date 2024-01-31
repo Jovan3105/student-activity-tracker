@@ -9,29 +9,34 @@ const Join = () => {
     const navigate = useNavigate();
     const [pin, setPin] = useState(0);
     const { initializeSocket } = useSocket();
-    const [socket, setSocket] = useState(null);
+    //const [socket, setSocket] = useState(null);
     const [playerAdded, setPlayerAdded] = useState(false);
     const [errorExists, setErrorExists] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const socket = initializeSocket()
 
     useEffect(() => {
-        socket?.on("redirectPlayers", async (gameId) => {
-            const response = await postRequest(`${baseUrl}/playerGameplays/`, JSON.stringify(
+        const fun = (gameId) => {
+            const response = postRequest(`${baseUrl}/playerGameplays/`, JSON.stringify(
                 {
                     playerId: user._id,
                     gameId: gameId,
                     score: 0,
                     questionList: [],
                 }
-            ));
-
+            ))
             navigate(`/games/player/${gameId}`);
-        })
-    }, [socket, user._id, navigate]);
+        }
+        socket.on("redirectPlayers", fun);
+
+        return () => {
+            socket.off("redirectPlayers", fun);
+        };
+    }, []);
 
     const join = () => {
-        const socket = initializeSocket();
-        setSocket(socket);
+        // const socket = initializeSocket();
+        // setSocket(socket);
         socket.emit("addPlayer", user, pin, (callback, gameId) => {
             if (callback) {
                 if (callback === "Pass") {

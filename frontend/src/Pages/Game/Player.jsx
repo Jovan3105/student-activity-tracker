@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 
 const Player = () => {
     const { initializeSocket } = useSocket();
-    const [socket, setSocket] = useState(null);
+    //const [socket, setSocket] = useState(null);
     const [isTimerScreen, setIsTimerScreen] = useState(false);
     const [isQuestionScreen, setIsQuestionScreen] = useState(false);
     const [isQuestionAnswered, setIsQuestionAnswered] = useState(false)
@@ -17,6 +17,8 @@ const Player = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const [newPlayerGameplay, setNewPlayerGameplay] = useState(null);
     const [isAnswerResultScreen, setIsAnswerResultScreen] = useState(false);
+    const socket = initializeSocket();
+    let newGame = false;
 
 
     const [answer, setAnswer] = useState({
@@ -26,13 +28,29 @@ const Player = () => {
     })
 
     useEffect(() => {
-        const socket = initializeSocket();
-        setSocket(socket);
-        socket.on("questionCountdownFromHost");
-        setIsAnswerResultScreen(false);
-        setIsTimerScreen(true);
-        startHostCountdown(5);
-        socket.on("questionCountdownForPlayerFromHost", (time, question) => {
+        // const socket = initializeSocket();
+        // setSocket(socket);
+        const function1 = () => {
+            // console.log("questionCountdownFromHost", socket)
+            if (!newGame) {
+                setIsAnswerResultScreen(false);
+                setIsTimerScreen(true);
+                newGame = true;
+            }
+            else {
+                setAnswer((prev) => ({
+                    ...prev,
+                    answer: null
+                }));
+                setIsAnswerResultScreen(true);
+                setIsTimerScreen(false);
+            }
+            startHostCountdown(5);
+        }
+        socket.on("questionCountdownFromHost", function1);
+
+
+        const function2 = (time, question) => {
             setQuestionData(question);
             startQuestionCountdown(time);
             setAnswer((prev) => ({
@@ -41,8 +59,14 @@ const Player = () => {
                 answer: null,
                 time: 0
             }))
-        });
-    }, [socket]);
+        }
+        socket.on("questionCountdownForPlayerFromHost", function2);
+
+        return () => {
+            socket.off("questionCountdownFromHost", function1);
+            socket.off("questionCountdownForPlayerFromHost", function2)
+        };
+    }, []);
 
     useEffect(() => {
         if (answer?.answer) {
@@ -86,7 +110,11 @@ const Player = () => {
             (time) => setTimer(time),
             () => {
                 setIsTimerScreen(false);
+                setIsAnswerResultScreen(false);
                 setIsQuestionScreen(true);
+                if (answer.answer == null) {
+                    setNewPlayerGameplay(null);
+                }
             }
         );
     };
@@ -102,7 +130,6 @@ const Player = () => {
             () => {
                 setIsQuestionScreen(false);
                 setIsQuestionAnswered(false);
-                setIsAnswerResultScreen(true);
             }
         );
     };
@@ -178,8 +205,15 @@ const Player = () => {
                                     <span style={{ color: "#FF6868" }}>Wrong</span> :
                                     <span style={{ color: "#DCFFB7" }}>Correct</span>}
                             </h3>
-                            <hr></hr>
-                            <h3 className="text-center"> Points: {newPlayerGameplay?.points}</h3>
+
+                            {
+                                (!newPlayerGameplay || newPlayerGameplay.points === 0) ?
+                                    "" :
+                                    <div>
+                                        <hr></hr>
+                                        <h3 className="text-center"> You earned a point!</h3>
+                                    </div>
+                            }
                         </div>
                     </div>
                 </div>
