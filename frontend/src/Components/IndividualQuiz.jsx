@@ -88,13 +88,13 @@ const IndividualQuiz = ({ quiz }) => {
                         </p>
                     </div>
 
-                    <div className="col-md-2 d-flex justify-content-center ">
+                    <div className="col-md-2 d-flex align-items-center ">
                         <div className="mt-2 mb-2">
-                            <button type="button" className="btn btn-primary mb-2" onClick={startGame}>Start</button>
+                            <button type="button" className="btn btn-primary mb-2 w-100" onClick={startGame}>Start</button>
                             <br />
-                            <button type="button" className="btn btn-secondary mb-2" onClick={modifyQuiz}>Modify</button>
+                            <button type="button" className="btn btn-secondary mb-2 w-100" onClick={modifyQuiz}>Modify</button>
                             <br />
-                            <button type="button" className="btn btn-danger mb-2" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
+                            <button type="button" className="btn btn-danger w-100" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
 
                         </div>
                     </div>
