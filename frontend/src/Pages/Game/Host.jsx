@@ -15,6 +15,8 @@ const Host = () => {
     const [timer, setTimer] = useState(5);
     const [currentQuestionId, setCurrentQuestionId] = useState(0);
     const [quizData, setQuizData] = useState(null);
+    const [isScoreboardScreen, setIsScoreboardScreen] = useState(false);
+    const [playerGameplays, setPlayerGameplays] = useState([]);
 
     const [questionData, setQuestionData] = useState({
         questionIndex: 1,
@@ -97,9 +99,24 @@ const Host = () => {
         startCountdown(seconds,
             (time) => setTimer(time),
             () => {
+                if (index === quizData.questionList.length) {
+                    const response = getRequest(`${baseUrl}/playerGameplays/${gameData._id}/players`).then((value) => {
+                        //console.log(value)
+                        setPlayerGameplays(value);
+                    });
+                    setIsQuestionScreen(false);
+                    setIsTimerScreen(false)
+                    //console.log("isQuestionScreen", isQuestionScreen)
+                    setIsScoreboardScreen(true);
+                    return;
+                }
+                else {
+                    setIsQuestionScreen(true);
+                }
                 showQuestion(index);
                 setIsTimerScreen(false);
-                setIsQuestionScreen(true);
+                //setIsQuestionScreen(true);
+
             },
             true  // set isPreview to true for timer countdown
         );
@@ -118,10 +135,6 @@ const Host = () => {
     };
 
     const showQuestion = (index) => {
-        if (index === quizData.questionList.length) {
-            alert("No more questions"); // placeholder
-            return;
-        }
         setQuestionData(quizData.questionList[index]);
         setCurrentQuestionId((prev) => prev + 1);
 
@@ -209,6 +222,38 @@ const Host = () => {
                                         <input type="text" className="form-control w-50 border-warning" placeholder="Answer 4" name="d" readOnly value={questionData.answerList[3].body}>
                                         </input>
                                     </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            {isScoreboardScreen &&
+                <div className="col-md-5">
+                    <div className="card">
+                        <div className="card-header">
+                            <h4 className="text-center">Scoreboard</h4>
+                        </div>
+                        <div className="card-body">
+                            <div className="card-body custom-list overflow-auto" style={{ maxHeight: "30vw" }}>
+                                {
+                                    playerGameplays.length > 0 && playerGameplays.sort(function (a, b) { return b.score - a.score }).map((player) => (
+                                        <div className="card-header border mt-2 row" key={player.playerId}>
+                                            {
+                                                players.filter(p => p._id === player.playerId).map(p => (
+                                                    <div className="col-md-6 text-start" key={p._id}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16" style={{ position: "relative", bottom: "2px", right: "2px" }}>
+                                                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                                                        </svg>
+                                                        <span className="text-start ">{p.name}</span>
+                                                    </div>
+                                                ))
+                                            }
+                                            <div className="col-md-6 text-end">
+                                                <span><b>{player.score}</b></span>
+                                            </div>
+                                        </div>
+                                    ))
                                 }
                             </div>
                         </div>

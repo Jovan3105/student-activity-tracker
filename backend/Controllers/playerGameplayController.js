@@ -114,5 +114,21 @@ const getPlayerGameplayByUserAndGame = async (req, res) => {
     }
 }
 
+const getPlayerGameplaysByGame = async (req, res) => {
+    const gameId = req.params.gameId;
+    try {
+        const playerGameplays = await PlayerGameplay.find({ gameId: gameId })
 
-module.exports = { createPlayerGameplay, getPlayerGameplays, getPlayerGameplay, addAnswer, getPlayerGameplayByUserAndGame };
+        if (playerGameplays.length === 0) {
+            return res.status(400).json("There are no gameplays for that game.")
+        }
+
+        res.status(200).json(playerGameplays);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
+
+module.exports = { createPlayerGameplay, getPlayerGameplays, getPlayerGameplay, addAnswer, getPlayerGameplayByUserAndGame, getPlayerGameplaysByGame };
