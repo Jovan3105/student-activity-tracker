@@ -108,6 +108,7 @@ const Host = () => {
                     setIsTimerScreen(false)
                     //console.log("isQuestionScreen", isQuestionScreen)
                     setIsScoreboardScreen(true);
+                    socket.emit("gameOver");
                     return;
                 }
                 else {

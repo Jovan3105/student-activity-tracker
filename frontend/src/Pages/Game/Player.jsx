@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSocket } from "../../Context/SocketContext";
 import { baseUrl, getRequest, patchRequest } from "../../utils/services";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Player = () => {
     const { initializeSocket } = useSocket();
@@ -19,6 +19,8 @@ const Player = () => {
     const [isAnswerResultScreen, setIsAnswerResultScreen] = useState(false);
     const socket = initializeSocket();
     let newGame = false;
+    const [isGameOver, setIsGameOver] = useState(false);
+    const navigate = useNavigate();
 
 
     const [answer, setAnswer] = useState({
@@ -62,9 +64,22 @@ const Player = () => {
         }
         socket.on("questionCountdownForPlayerFromHost", function2);
 
+
+        const function3 = () => {
+            setIsQuestionScreen(false);
+            setIsGameOver(true);
+
+            setInterval(() => {
+                navigate("/");
+            }, 2000);
+
+        }
+        socket.on("gameOverFromHost", function3);
+
         return () => {
             socket.off("questionCountdownFromHost", function1);
-            socket.off("questionCountdownForPlayerFromHost", function2)
+            socket.off("questionCountdownForPlayerFromHost", function2);
+            socket.off("gameOverFromHost", function3);
         };
     }, []);
 
@@ -214,6 +229,15 @@ const Player = () => {
                                         <h3 className="text-center"> You earned a point!</h3>
                                     </div>
                             }
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isGameOver && (
+                <div className="col-md-5">
+                    <div className="card">
+                        <div className="card-body">
+                            <h4 className="mx-auto text-center card mt-3">Thank you for playing.</h4>
                         </div>
                     </div>
                 </div>

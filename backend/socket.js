@@ -56,6 +56,10 @@ io.on("connection", (socket) => {
         socket.to(game.pin).emit("questionCountdownForPlayerFromHost", time, question);
     })
 
+    socket.on("gameOver", () => {
+        socket.to(game.pin).emit("gameOverFromHost");
+    })
+
 });
 
 io.listen(3000);
