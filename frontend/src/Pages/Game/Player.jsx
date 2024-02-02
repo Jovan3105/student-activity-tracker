@@ -69,9 +69,7 @@ const Player = () => {
             setIsQuestionScreen(false);
             setIsGameOver(true);
 
-            setInterval(() => {
-                navigate("/");
-            }, 2000);
+            window.location.reload(true);
 
         }
         socket.on("gameOverFromHost", function3);

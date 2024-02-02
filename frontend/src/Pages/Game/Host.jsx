@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { baseUrl, getRequest } from "../../utils/services";
 import { useSocket } from "../../Context/SocketContext";
+import * as XLSX from 'xlsx';
 
 const Host = () => {
     const { id } = useParams();
@@ -17,6 +18,7 @@ const Host = () => {
     const [quizData, setQuizData] = useState(null);
     const [isScoreboardScreen, setIsScoreboardScreen] = useState(false);
     const [playerGameplays, setPlayerGameplays] = useState([]);
+    const excelData = [];
 
     const [questionData, setQuestionData] = useState({
         questionIndex: 1,
@@ -70,6 +72,17 @@ const Host = () => {
         });
         console.log(players);
     }, [players, socket])
+
+    useEffect(() => {
+        for (let i = 0; i < players.length; i++) {
+            for (let j = 0; j < playerGameplays.length; j++) {
+                if (players[i]._id === playerGameplays[j].playerId) {
+                    excelData.push({ name: players[i].name, score: playerGameplays[j].score });
+                }
+            }
+        }
+        console.log("exceldata", excelData)
+    }, [playerGameplays])
 
     const startGame = () => {
         socket.emit("startGame");
@@ -148,6 +161,13 @@ const Host = () => {
         });
         startQuestionCountdown(time, index + 1);
 
+    };
+
+    const downloadExcel = (data) => {
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        XLSX.writeFile(workbook, "DataSheet.xlsx");
     };
 
     return (
@@ -232,8 +252,13 @@ const Host = () => {
             {isScoreboardScreen &&
                 <div className="col-md-5">
                     <div className="card">
-                        <div className="card-header">
+                        <div className="card-header d-flex justify-content-center">
                             <h4 className="text-center">Scoreboard</h4>
+                            &nbsp;
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-gear" viewBox="0 0 16 16" onClick={() => downloadExcel(excelData)} style={{ position: "relative", top: "9px" }}>
+                                <path d="M8.5 6.5a.5.5 0 0 0-1 0v3.793L6.354 9.146a.5.5 0 1 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8.5 10.293z" />
+                                <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                            </svg>
                         </div>
                         <div className="card-body">
                             <div className="card-body custom-list overflow-auto" style={{ maxHeight: "30vw" }}>
