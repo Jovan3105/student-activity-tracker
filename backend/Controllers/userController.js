@@ -23,8 +23,14 @@ const registerUser = async (req, res) => {
             return res.status(400).json("All fields are required.");
         }
 
-        if (!validator.isEmail(email)) {
-            return res.status(400).json("Email not valid.");
+        const nameRegex = /^[A-Za-z]{1,10}\.[A-Za-z]{1,13}$/;
+        if (!nameRegex.test(name)) {
+            return res.status(400).json("Name is not in a valid IMI format.");
+        }
+
+        const customEmailRegex = /^\d{0,3}-\d{0,4}@pmf\.kg\.ac\.rs$/;
+        if (!customEmailRegex.test(email)) {
+            return res.status(400).json("Email is not in a valid IMI format.");
         }
 
         if (!validator.isStrongPassword(password)) {

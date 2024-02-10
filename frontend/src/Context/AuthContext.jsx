@@ -12,6 +12,16 @@ export const AuthContextProvider = ({ children }) => {
         email: "",
         password: ""
     });
+    const [registerError, setRegisterError] = useState(null);
+    const [isRegisterLoading, setIsRegisterLoading] = useState(false);
+    const [registerInfo, setRegisterInfo] = useState({
+        name: "",
+        email: "",
+        password: "",
+        role: 1
+    });
+
+
 
     const updateLoginInfo = useCallback((info) => {
         setLoginInfo(info)
@@ -47,6 +57,30 @@ export const AuthContextProvider = ({ children }) => {
         setUser(null);
     }, []);
 
+    const updateRegisterInfo = useCallback((info) => {
+        console.log(info)
+        setRegisterInfo(info)
+    }, []);
+
+    const registerUser = useCallback(async (e) => {
+
+        e.preventDefault(); // prevent reloading the page when submiting a form
+        setIsRegisterLoading(true);
+        setRegisterError(null); // reset the presence of an error
+
+        const response = await postRequest(`${baseUrl}/users/register`, JSON.stringify(registerInfo))
+
+        setIsRegisterLoading(false);
+
+        if (response.error) {
+            return setRegisterError(response);
+        }
+        // if there is no error then set user
+        localStorage.setItem("User", JSON.stringify(response));
+        setUser(response);
+
+    }, [registerInfo]);
+
 
     return <AuthContext.Provider value={{
         user,
@@ -55,7 +89,12 @@ export const AuthContextProvider = ({ children }) => {
         loginInfo,
         updateLoginInfo,
         isLoginLoading,
-        logoutUser
+        logoutUser,
+        registerUser,
+        registerError,
+        registerInfo,
+        updateRegisterInfo,
+        isRegisterLoading
     }}>
         {children}
     </AuthContext.Provider>
