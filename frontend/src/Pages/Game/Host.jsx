@@ -84,8 +84,13 @@ const Host = () => {
         console.log("exceldata", excelData)
     }, [playerGameplays])
 
-    const startGame = () => {
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const startGame = async () => {
         socket.emit("startGame");
+        await sleep(500);
         socket.emit("questionCountdown", () => {
             startHostCountdown(5, currentQuestionId);
         });
