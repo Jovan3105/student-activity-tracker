@@ -37,21 +37,57 @@ const registerUser = async (req, res) => {
             return res.status(400).json("Password is not strong enough.");
         }
 
-        user = new userModel({ name, email, password, role });
+        const confirmationCode = Math.floor(100000 + Math.random() * 900000);
+
+        user = new userModel({ name, email, password, role, confirmationCode, isConfirmed: false });
+
+        sendConfirmationCode(email, confirmationCode);
 
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
 
         await user.save();
 
-        const token = createToken(user._id);
 
-        res.status(200).json({ _id: user._id, name, email, role, token });
+        //res.status(200).json();
     } catch (error) {
         console.log(error);
         res.status(500).json(error);
     }
 
+};
+
+const sendConfirmationCode = async (email, code) => {
+    // Implement logic to send the confirmation code via email
+    // You can use a library like Nodemailer to send emails
+
+    // Example Nodemailer usage (replace with your own email sending logic)
+    const nodemailer = require('nodemailer');
+
+    const transporter = nodemailer.createTransport({
+        // Configure your email transport options (SMTP, etc.)
+        // Example using a Gmail SMTP server:
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: 'Confirmation Code',
+        text: `Your confirmation code is: ${code}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log('Error sending confirmation code:', error);
+        } else {
+            console.log('Confirmation code sent:', info.response);
+        }
+    });
 };
 
 const loginUser = async (req, res) => {

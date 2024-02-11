@@ -76,8 +76,8 @@ export const AuthContextProvider = ({ children }) => {
             return setRegisterError(response);
         }
         // if there is no error then set user
-        localStorage.setItem("User", JSON.stringify(response));
-        setUser(response);
+        // localStorage.setItem("User", JSON.stringify(response));
+        // setUser(response);
 
     }, [registerInfo]);
 

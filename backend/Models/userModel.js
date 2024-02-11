@@ -5,6 +5,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true, minlength: 3, maxlenght: 1024 },
     // 0 professor, 1 student
     role: { type: Number },
+    confirmationCode: { type: Number },
+    isConfirmed: { type: Boolean }
 }, {
     timestamps: true
 });
