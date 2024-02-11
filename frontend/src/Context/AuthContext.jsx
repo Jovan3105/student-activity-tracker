@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useState } from "react";
-import { baseUrl, postRequest } from "../utils/services";
+import { baseUrl, patchRequest, postRequest } from "../utils/services";
 
 export const AuthContext = createContext();
 
@@ -20,6 +20,9 @@ export const AuthContextProvider = ({ children }) => {
         password: "",
         role: 1
     });
+    const [isConfirmationLoading, setIsConfirmationLoading] = useState(false);
+    const [confirmationMessage, setConfirmationMessage] = useState(null);
+    const [confirmationCode, setConfimationCode] = useState(0);
 
 
 
@@ -62,6 +65,11 @@ export const AuthContextProvider = ({ children }) => {
         setRegisterInfo(info)
     }, []);
 
+    const updateConfirmCode = useCallback((info) => {
+        //console.log(info)
+        setConfimationCode(info);
+    }, []);
+
     const registerUser = useCallback(async (e) => {
 
         e.preventDefault(); // prevent reloading the page when submiting a form
@@ -81,6 +89,27 @@ export const AuthContextProvider = ({ children }) => {
 
     }, [registerInfo]);
 
+    const confirmAccount = useCallback(async (e) => {
+
+        e.preventDefault(); // prevent reloading the page when submiting a form
+        setIsConfirmationLoading(true);
+        setConfirmationMessage(null); // reset the presence of an error
+
+        const response = await patchRequest(`${baseUrl}/users/register/confirm`, { confirmationCode: confirmationCode.number })
+
+        setIsConfirmationLoading(false);
+        //console.log("response", response)
+        if (!response) {
+            return setConfirmationMessage({ error: "User not found or already confirmed." })
+        }
+
+        if (response) {
+            return setConfirmationMessage({ pass: "Account confirmed successfully." });
+        }
+
+
+    }, [confirmationCode]);
+
 
     return <AuthContext.Provider value={{
         user,
@@ -94,7 +123,12 @@ export const AuthContextProvider = ({ children }) => {
         registerError,
         registerInfo,
         updateRegisterInfo,
-        isRegisterLoading
+        isRegisterLoading,
+        confirmAccount,
+        confirmationMessage,
+        isConfirmationLoading,
+        updateConfirmCode,
+        confirmationCode
     }}>
         {children}
     </AuthContext.Provider>

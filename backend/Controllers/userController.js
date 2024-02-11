@@ -89,6 +89,30 @@ const sendConfirmationCode = async (email, code) => {
         }
     });
 };
+const confirmAccount = async (req, res) => {
+    try {
+        const { confirmationCode } = req.body;
+
+        const user = await userModel.findOne(
+            {
+                confirmationCode,
+                isConfirmed: false
+            }
+        );
+
+        if (!user) {
+            return res.status(400).json({ error: "User not found or already confirmed." });
+        }
+
+        user.isConfirmed = true;
+        await user.save();
+
+        res.status(200).json({ pass: "Account confirmed successfully." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json("Internal Server Error.");
+    }
+}
 
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
@@ -141,4 +165,4 @@ const getUsers = async (req, res) => {
     }
 }
 
-module.exports = { registerUser, loginUser, findUser, getUsers };
+module.exports = { registerUser, loginUser, findUser, getUsers, confirmAccount };
