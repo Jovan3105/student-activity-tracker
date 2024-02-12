@@ -129,6 +129,10 @@ const loginUser = async (req, res) => {
             return res.status(400).json("Invalid email or password.");
         }
 
+        if (user.isConfirmed === false) {
+            return res.status(400).json("User is not confirmed.")
+        }
+
         const token = createToken(user._id);
 
         res.status(200).json({ _id: user._id, name: user.name, email, role: user.role, token });
