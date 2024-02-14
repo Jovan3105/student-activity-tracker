@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
 const subjectSchema = new mongoose.Schema({
     name: { type: String, required: true, minlength: 3, maxlenght: 30 },
-    year: { type: Date, required: true },
+    year: { type: String, required: true },
     semester: { type: String, required: true },
+    backgroundImage: { type: String },
     gameList: [
         { type: mongoose.Schema.Types.ObjectId, ref: "Game" }
     ],

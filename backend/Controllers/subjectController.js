@@ -3,13 +3,14 @@ const Subject = require("../Models/subjectModel");
 
 const createSubject = async (req, res) => {
 
-    const { name, year, semester } = req.body;
+    const { name, year, semester, backgroundImage } = req.body;
 
     const subject = new Subject(
         {
             name,
             year,
-            semester
+            semester,
+            backgroundImage
         }
     )
 

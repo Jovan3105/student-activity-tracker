@@ -14,6 +14,7 @@ import Join from "./Pages/Game/Join";
 import Player from "./Pages/Game/Player";
 import Footer from "./Components/Footer";
 import "./App.css"
+import Subjects from "./Pages/Subjects/Subjects";
 
 function App() {
 
@@ -27,6 +28,7 @@ function App() {
           <Route path="/" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/register" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Register></Register>}></Route>
           <Route path="/login" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
+          <Route path="/subjects" element={user ? (user?.role === 0 ? <Subjects></Subjects> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/quizes" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/quizes/:id" element={user?.role === 0 ? <CreateQuiz></CreateQuiz> : <Join></Join>}></Route>
           <Route path="/games/host/:id" element={user?.role === 0 ? <Host></Host> : <Join></Join>}></Route>
