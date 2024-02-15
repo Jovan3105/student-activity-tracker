@@ -28,8 +28,9 @@ const registerUser = async (req, res) => {
             return res.status(400).json("Name is not in a valid IMI format.");
         }
 
-        const customEmailRegex = /^\d{0,3}-\d{0,4}@pmf\.kg\.ac\.rs$/;
-        if (!customEmailRegex.test(email)) {
+        const customEmailRegexStudent = /^\d{0,3}-\d{0,4}@pmf\.kg\.ac\.rs$/;
+        const customEmailRegexTeacher = /^[A-Za-z]{0,10}\.[A-Za-z]{0,13}@pmf\.kg\.ac\.rs$/;
+        if (!customEmailRegexStudent.test(email) && !customEmailRegexTeacher.test(email)) {
             return res.status(400).json("Email is not in a valid IMI format.");
         }
 
@@ -45,6 +46,10 @@ const registerUser = async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
+
+        if (customEmailRegexTeacher.test(user.email)) {
+            user.role = 0;
+        }
 
         await user.save();
 
