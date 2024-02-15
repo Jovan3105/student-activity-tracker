@@ -1,0 +1,27 @@
+.element {
+    width: 100%;
+    aspect-ratio: 1 / 1.4;
+}
+
+.image-container {
+    height: 50%;
+}
+
+.image-container img {
+    height: 100%;
+}
+
+.element:hover {
+    transform: scale(1.1);
+    box-shadow: 2px 2px 2px 2px;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.icon-delete {
+    position: absolute;
+    z-index: 10;
+    color: red;
+    right: 3px;
+    top: 3px;
+}

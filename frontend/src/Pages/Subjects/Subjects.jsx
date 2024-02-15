@@ -1,6 +1,8 @@
 import moment from "moment";
-import { useState } from "react";
-import { baseUrl, postRequest } from "../../utils/services";
+import { useEffect, useState } from "react";
+import { baseUrl, getRequest, postRequest } from "../../utils/services";
+import "./style.css";
+
 const Subjects = () => {
     const [subjectData, setSubjectData] = useState({
         name: "",
@@ -8,15 +10,16 @@ const Subjects = () => {
         semester: "",
         backgroundImage: ""
     })
+    const [subjects, setSubjects] = useState([]);
 
     const changeSubjectProperties = (e) => {
         setSubjectData({ ...subjectData, [e.target.name]: e.target.value });
-        console.log(subjectData);
+        //console.log(subjectData);
     }
 
     const handleSubmit = (e) => {
         //e.preventDefault();
-        console.log("Submit");
+        //console.log("Submit");
         const response = postRequest(`${baseUrl}/subjects`, JSON.stringify(
             {
                 name: subjectData.name,
@@ -27,7 +30,18 @@ const Subjects = () => {
         ))
     }
 
-    console.log(subjectData);
+    useEffect(() => {
+        const response = getRequest(`${baseUrl}/subjects`).then((value) => {
+            //console.log(value);
+            setSubjects(value);
+        });
+
+        if (response.error) {
+            return console.log(response.error);
+        }
+    }, []);
+
+    //console.log(subjectData);
     return (
         <div>
             <div className="row justify-content-center">
@@ -93,40 +107,49 @@ const Subjects = () => {
                 </div>
             </div>
             <br></br>
-            {/* <div className="row justify-content-center">
+            <div className="row justify-content-center">
                 <div className="col-md-10">
                     <div className="card">
                         <div className="card-body custom-list overflow-auto" style={{ maxHeight: "60vw" }}>
-                            {
-                                subjects.map((subject) => (
-                                    <div className="container">
-                                        <div className="card m-3">
-                                            <div className="row">
-                                                <div className="col-md-4" style={{ backgroundImage: "url(" + subject?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
-                                                </div>
-
-                                                <div className="col-md-6">
-                                                    <h2 className="mb-3">{subject?.name}</h2>
-                                                    <p>
-                                                        <i>Created at: {moment(subject.createdAt).calendar()}</i>
-                                                    </p>
-                                                </div>
-
-                                                <div className="col-md-2 d-flex align-items-center ">
-                                                    <div className="mt-2 mb-2">
-                                                        <button type="button" className="btn btn-primary mb-2 w-100" onClick={() => { console.log("View subject") }}>View</button>
-                                                        <button type="button" className="btn btn-danger w-100" onClick={() => { console.log("Delete subject") }}>Delete</button>
+                            <div className="row g-2">
+                                {
+                                    subjects.length != 0 ?
+                                        subjects.map((subject) => (
+                                            <div className="col-12 col-lg-4 col-xxl-3 px-3 py-3" key={subject._id} onClick={() => { console.log("Show subject") }}>
+                                                <div className="card mx-auto element">
+                                                    <div className="image-container">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" onClick={() => { console.log("delete") }} width="16" height="16" fill="currentColor" className="bi bi-trash icon-delete" viewBox="0 0 16 16">
+                                                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                                        </svg>
+                                                        {
+                                                            subject?.backgroundImage ?
+                                                                <img src={subject?.backgroundImage} className="card-img-top img-fluid subject-image" alt="Responsive image" />
+                                                                : <img src="./no-image-placeholder.jpg" className="card-img-top img-fluid subject-image" />
+                                                        }
+                                                    </div>
+                                                    <div className="card-body">
+                                                        <div className="row">
+                                                            <h5 className="mb-3">{subject?.name}</h5>
+                                                        </div>
+                                                        <div className="row">
+                                                            <small>
+                                                                <i>Created at: {moment(subject.createdAt).calendar()}</i>
+                                                            </small>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
+                                        ))
+                                        : <div>
+                                            <p className="text-center"><b>No subjects yet.</b></p>
                                         </div>
-                                    </div>
-                                ))
-                            }
+                                }
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div> */}
+            </div>
             <br></br>
         </div>
     );

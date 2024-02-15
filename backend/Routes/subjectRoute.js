@@ -4,7 +4,7 @@ const { createSubject, getSubject, getSubjects } = require("../Controllers/subje
 const router = express.Router();
 
 router.post("/", createSubject);
-router.get("/", getSubject);
-router.get("/:id", getSubjects);
+router.get("/", getSubjects);
+router.get("/:id", getSubject);
 
 module.exports = router;
