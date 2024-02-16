@@ -11,6 +11,8 @@ const Subjects = () => {
         backgroundImage: ""
     })
     const [subjects, setSubjects] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filteredData, setFilteredData] = useState([]);
 
     const changeSubjectProperties = (e) => {
         setSubjectData({ ...subjectData, [e.target.name]: e.target.value });
@@ -43,12 +45,27 @@ const Subjects = () => {
         const response = getRequest(`${baseUrl}/subjects`).then((value) => {
             //console.log(value);
             setSubjects(value);
+            setFilteredData(value);
         });
 
         if (response.error) {
             return console.log(response.error);
         }
     }, []);
+
+    const handleSearch = (e) => {
+        const term = e.target.value;
+        setSearchTerm(term);
+
+        // Filter the data based on the search term
+        const filtered = subjects.filter(item =>
+            Object.values(item).some(value =>
+                value.toString().toLowerCase().includes(term.toLowerCase())
+            )
+        );
+
+        setFilteredData(filtered);
+    };
 
     //console.log(subjectData);
     return (
@@ -118,12 +135,18 @@ const Subjects = () => {
             <br></br>
             <div className="row justify-content-center">
                 <div className="col-md-10">
+                    <input type="text" className="form-control " placeholder="Search" onChange={handleSearch} value={searchTerm} />
+                </div>
+            </div>
+            <br></br>
+            <div className="row justify-content-center">
+                <div className="col-md-10">
                     <div className="card">
                         <div className="card-body custom-list overflow-auto" style={{ maxHeight: "60vw" }}>
                             <div className="row g-2">
                                 {
                                     subjects.length != 0 ?
-                                        subjects.map((subject) => (
+                                        filteredData.map((subject) => (
                                             <div className="col-12 col-lg-4 col-xxl-3 px-3 py-3" key={subject._id} onClick={() => { console.log("Show subject") }}>
                                                 <div className="card mx-auto element">
                                                     <div className="image-container">
