@@ -46,6 +46,21 @@ const getSubject = async (req, res) => {
     }
 }
 
+const deleteSubject = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).send(`No subject with id: ${id}`)
+    }
+
+    try {
+        await Subject.findOneAndDelete({ _id: id })
+        res.json("Subject deleted succesfully")
+    } catch (error) {
+        res.status(500).json(error)
+    }
+}
 
 
-module.exports = { createSubject, getSubject, getSubjects };
+
+module.exports = { createSubject, getSubject, getSubjects, deleteSubject };
