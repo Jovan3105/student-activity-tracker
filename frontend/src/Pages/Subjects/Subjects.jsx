@@ -170,8 +170,10 @@ const Subjects = () => {
                                                         }
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="row">
-                                                            <h5 className="mb-3">{subject?.name + " " + subject?.year}</h5>
+                                                        <div className="row bodyWrap">
+                                                            <h5 className="mb-3 textWrap">
+                                                                {subject?.name + " " + subject?.year}
+                                                            </h5>
                                                         </div>
                                                         <div className="row">
                                                             <small>

@@ -25,3 +25,15 @@
     right: 3px;
     top: 3px;
 }
+
+.bodyWrap {
+    white-space: nowrap;
+    /* Prevent text from breaking into new line*/
+}
+
+.textWrap {
+    overflow: hidden;
+    /* This is optional; it hides the overflow if the text is too long to fit */
+    text-overflow: ellipsis;
+    /* This is optional; it adds an ellipsis (...) if the text overflows */
+}
