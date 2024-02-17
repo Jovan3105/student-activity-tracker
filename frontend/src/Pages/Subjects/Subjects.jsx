@@ -60,13 +60,15 @@ const Subjects = () => {
         setSearchTerm(term);
 
         // Filter the data based on the search term
-        const filtered = subjects.filter(item =>
-            Object.values(item).some(value =>
-                value.toString().toLowerCase().includes(term.toLowerCase())
-            )
-        );
+        if (e.key === ' ' || e.key === 'Enter') {
+            const filtered = subjects.filter(item =>
+                Object.values(item).some(value =>
+                    value.toString().toLowerCase().includes(term.toLowerCase())
+                )
+            );
+            setFilteredData(filtered);
+        }
 
-        setFilteredData(filtered);
     };
 
     const showSubject = (subject) => {
@@ -142,7 +144,7 @@ const Subjects = () => {
             <br></br>
             <div className="row justify-content-center">
                 <div className="col-md-10">
-                    <input type="text" className="form-control " placeholder="Search" onChange={handleSearch} value={searchTerm} />
+                    <input type="text" className="form-control " placeholder="Press Enter to search." onChange={handleSearch} onKeyUp={handleSearch} value={searchTerm} />
                 </div>
             </div>
             <br></br>
@@ -169,7 +171,7 @@ const Subjects = () => {
                                                     </div>
                                                     <div className="card-body">
                                                         <div className="row">
-                                                            <h5 className="mb-3">{subject?.name}</h5>
+                                                            <h5 className="mb-3">{subject?.name + " " + subject?.year}</h5>
                                                         </div>
                                                         <div className="row">
                                                             <small>
