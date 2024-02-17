@@ -25,11 +25,11 @@ function App() {
       <NavBar></NavBar>
       <Container>
         <Routes>
-          <Route path="/" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
-          <Route path="/register" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Register></Register>}></Route>
-          <Route path="/login" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
+          <Route path="/" element={user ? (user?.role === 0 ? <Subjects></Subjects> : <Join></Join>) : <Login></Login>}></Route>
+          <Route path="/register" element={user ? (user?.role === 0 ? <Subjects></Subjects> : <Join></Join>) : <Register></Register>}></Route>
+          <Route path="/login" element={user ? (user?.role === 0 ? <Subjects></Subjects> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/subjects" element={user ? (user?.role === 0 ? <Subjects></Subjects> : <Join></Join>) : <Login></Login>}></Route>
-          <Route path="/quizes" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
+          <Route path="/:subjectId/quizes" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/quizes/:id" element={user?.role === 0 ? <CreateQuiz></CreateQuiz> : <Join></Join>}></Route>
           <Route path="/games/host/:id" element={user?.role === 0 ? <Host></Host> : <Join></Join>}></Route>
           <Route path="/games/join" element={user?.role === 1 ? <Join></Join> : <Navigate to="/"></Navigate>}></Route>

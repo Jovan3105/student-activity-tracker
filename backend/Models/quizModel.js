@@ -25,7 +25,8 @@ const quizSchema = new mongoose.Schema({
                 },
             ]
         },
-    ]
+    ],
+    subjectId: { type: mongoose.Schema.Types.ObjectId, ref: "Subject" }
 }, {
     timestamps: true
 });

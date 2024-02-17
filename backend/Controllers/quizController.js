@@ -1,9 +1,10 @@
 const mongoose = require("mongoose")
 const Quiz = require("../Models/quizModel");
+const Subject = require("../Models/subjectModel");
 
 const createQuiz = async (req, res) => {
 
-    const { name, description, backgroundImage, creatorId, creatorName, pointsPerQuestion, questionList } = req.body;
+    const { name, description, backgroundImage, creatorId, creatorName, pointsPerQuestion, questionList, subjectId } = req.body;
 
     const quiz = new Quiz(
         {
@@ -14,7 +15,8 @@ const createQuiz = async (req, res) => {
             creatorName,
             pointsPerQuestion,
             numberOfQuestions: questionList.length,
-            questionList
+            questionList,
+            subjectId
         }
     )
 
@@ -94,4 +96,20 @@ const updateQuiz = async (req, res) => {
     }
 }
 
-module.exports = { createQuiz, getQuiz, getQuizes, deleteQuiz, updateQuiz };
+const getQuizesBySubjectId = async (req, res) => {
+    const { id } = req.params;
+    try {
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send(`No subject with id: ${id}`)
+        }
+        // to-do: find personal quizes
+        const response = await Quiz.find({ subjectId: id });
+
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
+
+module.exports = { createQuiz, getQuiz, getQuizes, deleteQuiz, updateQuiz, getQuizesBySubjectId };

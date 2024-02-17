@@ -2,6 +2,7 @@ import moment from "moment";
 import { useEffect, useState } from "react";
 import { baseUrl, deleteRequest, getRequest, postRequest } from "../../utils/services";
 import "./style.css";
+import { json, useNavigate } from "react-router-dom";
 
 const Subjects = () => {
     const [subjectData, setSubjectData] = useState({
@@ -13,6 +14,7 @@ const Subjects = () => {
     const [subjects, setSubjects] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredData, setFilteredData] = useState([]);
+    const navigate = useNavigate();
 
     const changeSubjectProperties = (e) => {
         setSubjectData({ ...subjectData, [e.target.name]: e.target.value });
@@ -66,6 +68,11 @@ const Subjects = () => {
 
         setFilteredData(filtered);
     };
+
+    const showSubject = (subject) => {
+        sessionStorage.setItem("Subject", JSON.stringify(subject));
+        navigate(`/${subject._id}/quizes`);
+    }
 
     //console.log(subjectData);
     return (
@@ -147,7 +154,7 @@ const Subjects = () => {
                                 {
                                     subjects.length != 0 ?
                                         filteredData.map((subject) => (
-                                            <div className="col-12 col-lg-4 col-xxl-3 px-3 py-3" key={subject._id} onClick={() => { console.log("Show subject") }}>
+                                            <div className="col-12 col-lg-4 col-xxl-3 px-3 py-3" key={subject._id} onClick={() => showSubject(subject)}>
                                                 <div className="card mx-auto element">
                                                     <div className="image-container">
                                                         <svg xmlns="http://www.w3.org/2000/svg" onClick={() => deleteSubject(subject._id)} width="16" height="16" fill="currentColor" className="bi bi-trash icon-delete" viewBox="0 0 16 16">
