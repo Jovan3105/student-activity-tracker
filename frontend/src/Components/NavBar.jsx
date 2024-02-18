@@ -24,13 +24,19 @@ const NavBar = () => {
                     <Stack direction="horizontal" gap={3}>
                         {
                             user ? (
-                                <Stack direction="horizontal" gap={3}>
+                                <Stack direction="horizontal" gap={4}>
                                     {user?.role === 0 ? <Link to="/quizes" className="link-dark text-decoration-none">
                                         Quizes
                                     </Link> : ""}
-                                    {user?.role === 1 ? <Link to="/games/join" className="link-dark text-decoration-none">
-                                        Play
-                                    </Link> : ""}
+                                    {user?.role === 1 ?
+                                        <>
+                                            <Link to="/games/join" className="link-dark text-decoration-none">
+                                                Play
+                                            </Link>
+                                            <Link to="/subscribe" className="link-dark text-decoration-none">
+                                                Subscribe to a subject
+                                            </Link>
+                                        </> : ""}
                                     <Link to="/login" onClick={logoutUser} className="link-dark text-decoration-none">
                                         Logout
                                     </Link>
