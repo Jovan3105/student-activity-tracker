@@ -61,6 +61,24 @@ const deleteSubject = async (req, res) => {
     }
 }
 
+const getAvailableSubjects = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const subjects = await Subject.find(
+            {
+                studentList: {
+                    $nin: [userId]
+                }
+            }
+        );
+
+        res.status(200).json(subjects)
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
 
 
-module.exports = { createSubject, getSubject, getSubjects, deleteSubject };
+
+module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects };

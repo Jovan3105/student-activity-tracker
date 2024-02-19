@@ -14,4 +14,6 @@ const subjectSchema = new mongoose.Schema({
     timestamps: true
 });
 
+subjectSchema.index({ studentList: 1 });
+
 module.exports = mongoose.model("Subject", subjectSchema);
