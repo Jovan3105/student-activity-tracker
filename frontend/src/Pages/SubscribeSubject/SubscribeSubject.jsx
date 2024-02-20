@@ -116,7 +116,7 @@ const SubscribeSubject = () => {
                         <div className="card-body custom-list overflow-auto">
                             {
                                 availableSubjects.length != 0 ?
-                                    filteredDataAvailable.map((subject) => (
+                                    filteredDataAvailable.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt) }).map((subject) => (
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
@@ -142,7 +142,7 @@ const SubscribeSubject = () => {
                         <div className="card-body custom-list overflow-auto">
                             {
                                 subscribedSubjects.length != 0 ?
-                                    filteredDataSubscribed.map((subject) => (
+                                    filteredDataSubscribed.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt) }).map((subject) => (
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">

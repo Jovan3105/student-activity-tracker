@@ -155,7 +155,7 @@ const Subjects = () => {
                             <div className="row g-2">
                                 {
                                     subjects.length != 0 ?
-                                        filteredData.map((subject) => (
+                                        filteredData.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt) }).map((subject) => (
                                             <div className="col-12 col-lg-4 col-xxl-3 px-3 py-3" key={subject._id} onClick={() => showSubject(subject)}>
                                                 <div className="card mx-auto element">
                                                     <div className="image-container">
