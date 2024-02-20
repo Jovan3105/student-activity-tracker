@@ -1,15 +1,26 @@
 import { useEffect, useState } from "react";
-import { baseUrl, getRequest } from "../../utils/services";
+import { baseUrl, deleteRequest, getRequest, postRequest } from "../../utils/services";
 import "./style.css";
 
 const SubscribeSubject = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const [availableSubjects, setAvailableSubjects] = useState([]);
+    const [subscribedSubjects, setSubscribedSubjects] = useState([]);
 
     useEffect(() => {
         const response = getRequest(`${baseUrl}/subjects/available/${user._id}`).then((value) => {
-            console.log(value);
+            //console.log(value);
             setAvailableSubjects(value);
+        });
+        if (response.error) {
+            return console.log(response.error);
+        }
+    }, []);
+
+    useEffect(() => {
+        const response = getRequest(`${baseUrl}/subjects/subscribed/${user._id}`).then((value) => {
+            //console.log(value);
+            setSubscribedSubjects(value);
         });
         if (response.error) {
             return console.log(response.error);
@@ -24,6 +35,24 @@ const SubscribeSubject = () => {
         }
         return shortText;
     };
+
+    const subscribeSubject = (id) => {
+        const response = postRequest(`${baseUrl}/subjects/subscribe/${id}/${user._id}`).then(() => {
+            window.location.reload(true);
+        });
+        if (response.error) {
+            return console.log(response.error);
+        }
+    }
+
+    const unsubscribeSubject = (id) => {
+        const response = deleteRequest(`${baseUrl}/subjects/unsubscribe/${id}/${user._id}`).then(() => {
+            window.location.reload(true);
+        });
+        if (response.error) {
+            return console.log(response.error);
+        }
+    }
 
 
 
@@ -49,7 +78,7 @@ const SubscribeSubject = () => {
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
                                                     <h5>{cutText(subject.name)} - {subject.year}</h5>
-                                                    <button className="btn btn-primary flex-end">Subscribe</button>
+                                                    <button className="btn btn-primary flex-end" onClick={() => subscribeSubject(subject._id)}>Subscribe</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -68,22 +97,22 @@ const SubscribeSubject = () => {
                             <h4 className="text-center">My subjects</h4>
                         </div>
                         <div className="card-body custom-list overflow-auto">
-                            <div className="row justify-content-center mt-2">
-                                <div className="card">
-                                    <div className="d-flex justify-content-between p-2">
-                                        <h5>Placeholder subject 1 2024/2025</h5>
-                                        <button className="btn btn-danger flex-end">Unsubscribe</button>
+                            {
+                                subscribedSubjects.length != 0 ?
+                                    subscribedSubjects.map((subject) => (
+                                        <div className="row justify-content-center mt-2" key={subject._id}>
+                                            <div className="card">
+                                                <div className="d-flex justify-content-between p-2">
+                                                    <h5>{cutText(subject.name)} - {subject.year}</h5>
+                                                    <button className="btn btn-danger flex-end" onClick={() => unsubscribeSubject(subject._id)}>Unsubscribe</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )) :
+                                    <div>
+                                        <p className="text-center"><b>Not subscribed yet.</b></p>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="row justify-content-center mt-2">
-                                <div className="card">
-                                    <div className="d-flex justify-content-between p-2">
-                                        <h5>Placeholder subject 2 2024/2025</h5>
-                                        <button className="btn btn-danger flex-end">Unsubscribe</button>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
