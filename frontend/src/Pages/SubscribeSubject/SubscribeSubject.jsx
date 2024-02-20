@@ -6,11 +6,17 @@ const SubscribeSubject = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const [availableSubjects, setAvailableSubjects] = useState([]);
     const [subscribedSubjects, setSubscribedSubjects] = useState([]);
+    
+    const [searchTermAvailable, setSearchTermAvailable] = useState('');
+    const [filteredDataAvailable, setFilteredDataAvailable] = useState([]);
+    const [searchTermSubscribed, setSearchTermSubscribed] = useState('');
+    const [filteredDataSubscribed, setFilteredDataSubscribed] = useState([]);
 
     useEffect(() => {
         const response = getRequest(`${baseUrl}/subjects/available/${user._id}`).then((value) => {
             //console.log(value);
             setAvailableSubjects(value);
+            setFilteredDataAvailable(value);
         });
         if (response.error) {
             return console.log(response.error);
@@ -21,6 +27,7 @@ const SubscribeSubject = () => {
         const response = getRequest(`${baseUrl}/subjects/subscribed/${user._id}`).then((value) => {
             //console.log(value);
             setSubscribedSubjects(value);
+            setFilteredDataSubscribed(value);
         });
         if (response.error) {
             return console.log(response.error);
@@ -54,13 +61,49 @@ const SubscribeSubject = () => {
         }
     }
 
+    const handleSearchAvailable = (e) => {
+        const term = e.target.value;
+        setSearchTermAvailable(term);
+
+        // Filter the data based on the search term
+        if (e.key === ' ' || e.key === 'Enter') {
+            const filtered = availableSubjects.filter(item =>
+                Object.values(item).some(value =>
+                    value.toString().toLowerCase().includes(term.toLowerCase())
+                )
+            );
+            setFilteredDataAvailable(filtered);
+        }
+
+    };
+
+    const handleSearchSubscribed = (e) => {
+        const term = e.target.value;
+        setSearchTermSubscribed(term);
+
+        // Filter the data based on the search term
+        if (e.key === ' ' || e.key === 'Enter') {
+            const filtered = subscribedSubjects.filter(item =>
+                Object.values(item).some(value =>
+                    value.toString().toLowerCase().includes(term.toLowerCase())
+                )
+            );
+            setFilteredDataSubscribed(filtered);
+        }
+
+    };
+
+
 
 
     return (
         <div className="h-100 align-items-center justify-content-center">
             <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <input type="text" className="form-control " placeholder="Press Enter to search." />
+                <div className="col-md-12 col-lg-5 col-xxl-5">
+                    <input type="text" className="form-control " placeholder="Press Enter to search." onChange={handleSearchAvailable} onKeyUp={handleSearchAvailable} value={searchTermAvailable} />
+                </div>
+                <div className="col-md-12 col-lg-5 col-xxl-5">
+                    <input type="text" className="form-control " placeholder="Press Enter to search." onChange={handleSearchSubscribed} onKeyUp={handleSearchSubscribed} value={searchTermSubscribed} />
                 </div>
             </div>
             <br></br>
@@ -73,7 +116,7 @@ const SubscribeSubject = () => {
                         <div className="card-body custom-list overflow-auto">
                             {
                                 availableSubjects.length != 0 ?
-                                    availableSubjects.map((subject) => (
+                                    filteredDataAvailable.map((subject) => (
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
@@ -99,7 +142,7 @@ const SubscribeSubject = () => {
                         <div className="card-body custom-list overflow-auto">
                             {
                                 subscribedSubjects.length != 0 ?
-                                    subscribedSubjects.map((subject) => (
+                                    filteredDataSubscribed.map((subject) => (
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
