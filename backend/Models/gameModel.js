@@ -16,6 +16,13 @@ const gameSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "PlayerGameplay",
         },
+    ],
+    results: [
+        // {
+        //     playerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        //     playerName: { type: String },
+        //     score: { type: Number }
+        // }
     ]
 }, {
     timestamps: true

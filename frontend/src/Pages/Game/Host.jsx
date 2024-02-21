@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { baseUrl, getRequest } from "../../utils/services";
+import { baseUrl, getRequest, patchRequest } from "../../utils/services";
 import { useSocket } from "../../Context/SocketContext";
 import * as XLSX from 'xlsx';
 
@@ -73,16 +73,19 @@ const Host = () => {
         console.log(players);
     }, [players, socket])
 
-    useEffect(() => {
+    const modifyExcelData = (playerGameplays) => {
         for (let i = 0; i < players.length; i++) {
             for (let j = 0; j < playerGameplays.length; j++) {
                 if (players[i]._id === playerGameplays[j].playerId) {
-                    excelData.push({ name: players[i].name, score: playerGameplays[j].score });
+                    excelData.push({
+                        _id: players[i]._id,
+                        name: players[i].name,
+                        score: playerGameplays[j].score
+                    });
                 }
             }
         }
-        console.log("exceldata", excelData)
-    }, [playerGameplays])
+    }
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -116,12 +119,20 @@ const Host = () => {
     const startHostCountdown = (seconds, index) => {
         startCountdown(seconds,
             (time) => setTimer(time),
-            () => {
+            async () => {
                 if (index === quizData.questionList.length) {
-                    const response = getRequest(`${baseUrl}/playerGameplays/${gameData._id}/players`).then((value) => {
-                        //console.log(value)
-                        setPlayerGameplays(value);
-                    });
+                    const response = await getRequest(`${baseUrl}/playerGameplays/${gameData._id}/players`);
+
+                    modifyExcelData(response);
+
+                    //console.log("exceldata", excelData);
+                    const result = patchRequest(`${baseUrl}/games/${gameData._id}/results`,
+                        {
+                            excelData: excelData
+                        }
+                    );
+
+                    setPlayerGameplays(response);
                     setIsQuestionScreen(false);
                     setIsTimerScreen(false)
                     //console.log("isQuestionScreen", isQuestionScreen)

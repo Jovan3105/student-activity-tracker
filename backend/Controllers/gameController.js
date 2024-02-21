@@ -64,4 +64,27 @@ const addPlayer = async (req, res) => {
     }
 }
 
-module.exports = { createGame, getGames, getGame, addPlayer };
+const addResult = async (req, res) => {
+    const { gameId } = req.params;
+    const { excelData } = req.body;
+
+    try {
+        const game = await Game.findById(gameId);
+
+        if (game == null) {
+            return res.status(400).json("Game not found.");
+        }
+
+        excelData.forEach(element => {
+            game.results.push(element);
+        });
+
+        await game.save();
+        res.status(200).send(game);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
+module.exports = { createGame, getGames, getGame, addPlayer, addResult };
