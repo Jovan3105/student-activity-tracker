@@ -1,9 +1,9 @@
-.custom-list {
+.custom-list-subjects {
     height: 60vh;
 }
 
 @media only screen and (max-width: 600px) {
-    .custom-list {
+    .custom-list-subjects {
         max-height: 30vh;
     }
 }

@@ -113,7 +113,7 @@ const SubscribeSubject = () => {
                         <div className="card-header">
                             <h4 className="text-center">Available subjects</h4>
                         </div>
-                        <div className="card-body custom-list overflow-auto">
+                        <div className="card-body custom-list-subjects overflow-auto">
                             {
                                 availableSubjects.length != 0 ?
                                     filteredDataAvailable.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt) }).map((subject) => (
@@ -139,7 +139,7 @@ const SubscribeSubject = () => {
                         <div className="card-header">
                             <h4 className="text-center">My subjects</h4>
                         </div>
-                        <div className="card-body custom-list overflow-auto">
+                        <div className="card-body custom-list-subjects overflow-auto">
                             {
                                 subscribedSubjects.length != 0 ?
                                     filteredDataSubscribed.sort(function (a, b) { return new Date(b.createdAt) - new Date(a.createdAt) }).map((subject) => (
