@@ -16,6 +16,7 @@ import Footer from "./Components/Footer";
 import "./App.css"
 import Subjects from "./Pages/Subjects/Subjects";
 import SubscribeSubject from "./Pages/SubscribeSubject/SubscribeSubject";
+import AllGames from "./Pages/AllGames/AllGames";
 
 function App() {
 
@@ -33,6 +34,7 @@ function App() {
           <Route path="/:subjectId/quizes" element={user ? (user?.role === 0 ? <Quizes></Quizes> : <Join></Join>) : <Login></Login>}></Route>
           <Route path="/quizes/:id" element={user?.role === 0 ? <CreateQuiz></CreateQuiz> : <Join></Join>}></Route>
           <Route path="/games/host/:id" element={user?.role === 0 ? <Host></Host> : <Join></Join>}></Route>
+          <Route path="/:quizId/all-games" element={user?.role === 0 && <AllGames></AllGames>}></Route>
           <Route path="/games/join" element={user?.role === 1 ? <Join></Join> : <Navigate to="/"></Navigate>}></Route>
           <Route path="/games/player/:id" element={user?.role === 1 ? <Player></Player> : <Navigate to="/"></Navigate>}></Route>
           <Route path="/subscribe" element={user?.role === 1 && <SubscribeSubject></SubscribeSubject>}></Route>

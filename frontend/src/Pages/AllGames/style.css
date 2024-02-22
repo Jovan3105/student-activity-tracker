@@ -1,0 +1,10 @@
+.element-game {
+    align-items: center;
+}
+
+.element-game:hover {
+    transform: scale(1.1);
+    box-shadow: 2px 2px 2px 2px;
+    z-index: 10;
+    cursor: pointer;
+}

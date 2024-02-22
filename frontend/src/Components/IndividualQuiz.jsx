@@ -57,13 +57,18 @@ const IndividualQuiz = ({ quiz }) => {
         if (scoreboard.error) {
             return console.log(scoreboard.error);
         }
-        
+
         const socket = initializeSocket()
         socket.emit("setupGame", game, scoreboard);
 
         navigate(`/games/host/${game._id}`);
 
     }, [initializeSocket, navigate, quiz._id]);
+
+
+    const showAllGames = (id) => {
+        navigate(`/${id}/all-games`);
+    }
 
     //console.log(quiz?.creatorId);
     //console.log(creatorName);
@@ -94,7 +99,9 @@ const IndividualQuiz = ({ quiz }) => {
                             <br />
                             <button type="button" className="btn btn-secondary mb-2 w-100" onClick={modifyQuiz}>Modify</button>
                             <br />
-                            <button type="button" className="btn btn-danger w-100" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
+                            <button type="button" className="btn btn-danger mb-2 w-100" onClick={() => deleteQuiz(quiz._id)}>Delete</button>
+                            <br />
+                            <button type="button" className="btn btn-info w-100" onClick={() => showAllGames(quiz._id)}>All games</button>
 
                         </div>
                     </div>
