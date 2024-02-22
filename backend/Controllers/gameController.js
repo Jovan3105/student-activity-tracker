@@ -87,4 +87,20 @@ const addResult = async (req, res) => {
     }
 }
 
-module.exports = { createGame, getGames, getGame, addPlayer, addResult };
+const getGamesByQuizId = async (req, res) => {
+    const quizId = req.params.quizId;
+    try {
+        const games = await Game.find({ quizId });
+
+        if (!games) {
+            return res.status(400).json("No games found for the given quizId");
+        }
+
+        res.status(200).json(games);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
+
+module.exports = { createGame, getGames, getGame, addPlayer, addResult, getGamesByQuizId };
