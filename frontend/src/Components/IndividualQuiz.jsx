@@ -67,6 +67,7 @@ const IndividualQuiz = ({ quiz }) => {
 
 
     const showAllGames = (id) => {
+        sessionStorage.setItem("Quiz", JSON.stringify(quiz));
         navigate(`/${id}/all-games`);
     }
 
