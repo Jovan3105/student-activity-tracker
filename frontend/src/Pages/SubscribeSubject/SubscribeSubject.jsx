@@ -98,12 +98,12 @@ const SubscribeSubject = () => {
 
     return (
         <div className="h-100 align-items-center justify-content-center">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center gy-2">
                 <div className="col-md-12 col-lg-5 col-xxl-5">
-                    <input type="text" className="form-control " placeholder="Press Enter to search." onChange={handleSearchAvailable} onKeyUp={handleSearchAvailable} value={searchTermAvailable} />
+                    <input type="text" className="form-control " placeholder="Press Enter to search available subjects." onChange={handleSearchAvailable} onKeyUp={handleSearchAvailable} value={searchTermAvailable} />
                 </div>
                 <div className="col-md-12 col-lg-5 col-xxl-5">
-                    <input type="text" className="form-control " placeholder="Press Enter to search." onChange={handleSearchSubscribed} onKeyUp={handleSearchSubscribed} value={searchTermSubscribed} />
+                    <input type="text" className="form-control " placeholder="Press Enter to search subscribed subjects." onChange={handleSearchSubscribed} onKeyUp={handleSearchSubscribed} value={searchTermSubscribed} />
                 </div>
             </div>
             <br></br>
@@ -134,7 +134,7 @@ const SubscribeSubject = () => {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-12 col-lg-5 col-xxl-5">
+                <div className="col-md-12 col-lg-5 col-xxl-5 mb-3">
                     <div className="card">
                         <div className="card-header">
                             <h4 className="text-center">My subjects</h4>
