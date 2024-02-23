@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Container, Nav, Navbar, Stack } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar, Stack } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 
@@ -21,36 +21,39 @@ const NavBar = () => {
                     </span>
                 }
                 <Nav>
-                    <Stack direction="horizontal" gap={3}>
-                        {
-                            user ? (
-                                <Stack direction="horizontal" gap={4}>
-                                    {user?.role === 0 ? <Link to="/quizes" className="link-dark text-decoration-none">
-                                        Quizes
-                                    </Link> : ""}
-                                    {user?.role === 1 ?
-                                        <>
-                                            <Link to="/games/join" className="link-dark text-decoration-none">
-                                                Play
-                                            </Link>
-                                            <Link to="/subscribe" className="link-dark text-decoration-none">
-                                                Subscribe to a subject
-                                            </Link>
-                                        </> : ""}
-                                    <Link to="/login" onClick={logoutUser} className="link-dark text-decoration-none">
-                                        Logout
-                                    </Link>
-                                </Stack>) :
-                                <>
-                                    <Link to="/login" className="link-dark text-decoration-none">
-                                        Login
-                                    </Link>
-                                    <Link to="/register" className="link-dark text-decoration-none">
-                                        Register
-                                    </Link>
-                                </>
-                        }
-                    </Stack>
+                    <NavDropdown title="Menu" id="basic-nav-dropdown" drop="start">
+                        <Stack direction="vertical" gap={3}>
+                            {
+                                user ? (
+                                    <Stack direction="vertical" gap={4}>
+                                        {user?.role === 0 ? <NavDropdown.Item href="/quizes">
+                                            Quizes
+                                        </NavDropdown.Item> : ""}
+                                        {user?.role === 1 ?
+                                            <>
+                                                <NavDropdown.Item href="/games/join">
+                                                    Play
+                                                </NavDropdown.Item>
+                                                <NavDropdown.Item href="/subscribe">
+                                                    Subscribe to a subject
+                                                </NavDropdown.Item>
+                                            </> : ""}
+                                        <NavDropdown.Item href="/login" onClick={logoutUser}>
+                                            Logout
+                                        </NavDropdown.Item>
+                                    </Stack>) :
+                                    <>
+                                        <NavDropdown.Item href="/login">
+                                            Login
+                                        </NavDropdown.Item>
+                                        <NavDropdown.Item href="/register">
+                                            Register
+                                        </NavDropdown.Item>
+                                    </>
+                            }
+                        </Stack>
+                    </NavDropdown>
+
                 </Nav>
             </Container>
         </Navbar>
