@@ -36,7 +36,7 @@ const AllGames = () => {
         if (!dataRange[0] && !dataRange[1]) {
             setFilteredData(games);
         }
-        
+
         if (dataRange[0] && dataRange[1]) {
             const filtered = games.filter(item => {
                 const itemDate = new Date(item.createdAt).getTime();
@@ -85,7 +85,7 @@ const AllGames = () => {
             <div className="row justify-content-center">
                 <div className="col-md-10 mb-3">
                     <div className="card">
-                        <div className="card-body custom-list overflow-auto" style={{ maxHeight: "60vw" }}>
+                        <div className="card-body custom-list-all-games overflow-auto">
                             <div className="row g-2">
                                 {
                                     games.length != 0 ?
