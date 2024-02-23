@@ -9,3 +9,12 @@
     z-index: 10;
     cursor: pointer;
 }
+
+.react-datepicker-wrapper,
+.react-datepicker__input-container,
+.react-datepicker__input-container input {
+    text-align: center;
+    width: 80%;
+    border-color: rgba(0, 0, 0, 0.175);
+    border-radius: 0.375rem;
+}
