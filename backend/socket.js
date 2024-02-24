@@ -19,6 +19,10 @@ io.on("connection", (socket) => {
 
     socket.on("addPlayer", (user, pin, callback) => {
         //console.log(typeof (game.pin), typeof (pin));
+        if (!game) {
+            callback("No active games.", user._id);
+            return;
+        }
         if (game.pin == pin) {
 
             if (!players.some((player) => player._id === user._id)) {
