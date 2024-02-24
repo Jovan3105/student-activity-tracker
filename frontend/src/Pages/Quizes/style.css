@@ -1,0 +1,10 @@
+.show-users-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    width: 2em;
+    height: 2em;
+    top: 2px;
+}
