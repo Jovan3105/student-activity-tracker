@@ -59,8 +59,15 @@ const IndividualQuiz = ({ quiz }) => {
             return console.log(scoreboard.error);
         }
 
+        const subject = await getRequest(`${baseUrl}/subjects/subject/${quiz._id}`);
+        //console.log("subject", subject);
+
+        if (subject.error) {
+            return console.log(subject.error);
+        }
+
         const socket = initializeSocket()
-        socket.emit("setupGame", game, scoreboard);
+        socket.emit("setupGame", game, scoreboard, subject);
 
         navigate(`/games/host/${game._id}`);
 
@@ -101,7 +108,7 @@ const IndividualQuiz = ({ quiz }) => {
                             <Dropdown.Item onClick={modifyQuiz}>Modify</Dropdown.Item>
                             <Dropdown.Item onClick={() => showAllGames(quiz._id)}>Show All Games</Dropdown.Item>
                             <Dropdown.Divider />
-                            <Dropdown.Item onClick={() => deleteQuiz(quiz._id)}>Delete</Dropdown.Item>
+                            <Dropdown.Item onClick={() => deleteQuiz(quiz._id)} style={{ color: "red" }}>Delete</Dropdown.Item>
                         </DropdownButton>
                     </div>
                 </div>

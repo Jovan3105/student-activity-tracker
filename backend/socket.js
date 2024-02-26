@@ -5,16 +5,18 @@ const io = new Server({ cors: "http://localhost:5173" });
 let game;
 let players = [];
 let scoreboard;
+let subject;
 
 io.on("connection", (socket) => {
     console.log("new connection", socket.id);
 
-    socket.on("setupGame", (newGame, newScoreboard) => {
+    socket.on("setupGame", (newGame, newScoreboard, newSubject) => {
         socket.join(newGame.pin);
         console.log("Host: " + socket.id + " Game: " + newGame.pin);
         game = newGame;
         scoreboard = newScoreboard;
         players = [];
+        subject = newSubject;
     });
 
     socket.on("addPlayer", (user, pin, callback) => {
@@ -24,6 +26,12 @@ io.on("connection", (socket) => {
             return;
         }
         if (game.pin == pin) {
+
+            if (!subject.studentList.includes(user._id)) {
+                //console.log(user._id);
+                callback("Subscribe to the subject before playing the game.", user._id);
+                return;
+            }
 
             if (!players.some((player) => player._id === user._id)) {
                 players.push({ name: user.name, _id: user._id });

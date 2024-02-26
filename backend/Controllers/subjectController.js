@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Subject = require("../Models/subjectModel");
+const Quiz = require("../Models/quizModel");
 
 const createSubject = async (req, res) => {
 
@@ -139,8 +140,25 @@ const unsubscribeToSubject = async (req, res) => {
     }
 }
 
+const getSubjectByQuizId = async (req, res) => {
+    const quizId = req.params.quizId;
+    try {
+        const quiz = await Quiz.findById(quizId);
+        const subject = await Subject.findById(quiz.subjectId);
+
+        if (!subject) {
+            return res.status(400).json("Subject not found with that quiz.");
+        }
+
+        res.status(200).json(subject);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
 
 
 
 
-module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject };
+
+module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId };
