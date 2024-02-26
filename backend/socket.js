@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
             }
 
             if (!players.some((player) => player._id === user._id)) {
-                players.push({ name: user.name, _id: user._id });
+                players.push({ name: user.name, email: user.email, _id: user._id });
                 callback("Pass", game._id);
             }
             else {
