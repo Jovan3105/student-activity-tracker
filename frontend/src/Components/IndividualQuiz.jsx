@@ -85,9 +85,14 @@ const IndividualQuiz = ({ quiz }) => {
         <div className="container">
             <div className="card m-3">
                 <div className="row">
-                    <div className="col-md-4" style={{ backgroundImage: "url(" + quiz?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
-                        {/* <img src={quiz?.backgroundImage} className="img-fluid" alt="Responsive Image" /> */}
-                    </div>
+                    {
+                        quiz?.backgroundImage ?
+                            <div className="col-md-4" style={{ backgroundImage: "url(" + quiz?.backgroundImage + ")", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
+                            </div>
+                            :
+                            <div className="col-md-4" style={{ backgroundImage: "url(/no-image-placeholder.jpg)", backgroundSize: "contain", backgroundRepeat: "no-repeat", backgroundPosition: "center" }}>
+                            </div>
+                    }
 
                     <div className="col-md-6">
                         <h2 className="mb-3">{quiz?.name}</h2>
