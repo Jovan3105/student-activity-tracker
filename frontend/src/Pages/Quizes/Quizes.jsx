@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 import { baseUrl, deleteRequest, getRequest, postRequest } from "../../utils/services";
 import IndividualQuiz from "../../Components/IndividualQuiz";
@@ -28,6 +28,7 @@ const Quizes = () => {
     const [showModalUsers, setShowModalUsers] = useState(false);
     const [showModalResults, setShowModalResults] = useState(false);
     const [bestGames, setBestGames] = useState([]);
+    const gridRef = useRef();
 
     const uniqueColumns = Array.from(
         new Set(bestGames.flatMap((row) => Object.keys(row)))
@@ -168,6 +169,10 @@ const Quizes = () => {
 
     }, [quizes]);
 
+    const onBtnExport = useCallback(() => {
+        gridRef.current.api.exportDataAsCsv();
+    }, []);
+
     return (
         <div>
             <div className="row justify-content-center">
@@ -257,6 +262,7 @@ const Quizes = () => {
                             <Modal.Title>Results</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
+                            <button className="btn btn-secondary mb-2" onClick={onBtnExport}>Download CSV export file</button>
                             <div
                                 className="ag-theme-quartz" // applying the grid theme
                                 style={{ height: 500 }} // the grid will fill the size of the parent container
@@ -264,6 +270,7 @@ const Quizes = () => {
                                 <AgGridReact
                                     rowData={bestGames}
                                     columnDefs={columnDefs}
+                                    ref={gridRef}
                                 />
                             </div>
                         </Modal.Body>
