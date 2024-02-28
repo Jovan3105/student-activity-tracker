@@ -8,3 +8,8 @@
     height: 2em;
     top: 2px;
 }
+
+.results-modal {
+    width: 50vw;
+    max-width: 80vw;
+}

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Game = require("../Models/gameModel");
+const User = require("../Models/userModel");
 
 const createGame = async (req, res) => {
 
@@ -103,4 +104,48 @@ const getGamesByQuizId = async (req, res) => {
     }
 }
 
-module.exports = { createGame, getGames, getGame, addPlayer, addResult, getGamesByQuizId };
+const getBestResultsMatrix = async (req, res) => {
+    const quizIds = req.body.quizIds;
+
+    try {
+        const bestGamesMatrix = await Promise.all(quizIds.map(async (quizId) => {
+            const games = await Game.find({ quizId })
+                .populate('quizId', 'name') // Populate quizId and extract just the name
+                .exec();
+
+            let bestGame = null;
+            let highestMeanScore = -1;
+
+            const calculateMeanScore = (results) => {
+                if (results.length === 0) {
+                    return 0;
+                }
+
+                const totalScore = results.reduce((sum, result) => sum + result.score, 0);
+                return totalScore / results.length;
+            };
+
+            games.forEach(game => {
+                const meanScore = calculateMeanScore(game.results);
+
+                if (meanScore > highestMeanScore) {
+                    highestMeanScore = meanScore;
+                    bestGame = {
+                        quizName: game.quizId.name,
+                        students: [...game.results]
+                    };
+                }
+            });
+
+            return bestGame;
+        }));
+
+        res.json(bestGamesMatrix);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+};
+
+
+module.exports = { createGame, getGames, getGame, addPlayer, addResult, getGamesByQuizId, getBestResultsMatrix };

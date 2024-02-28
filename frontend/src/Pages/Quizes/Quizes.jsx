@@ -5,6 +5,9 @@ import IndividualQuiz from "../../Components/IndividualQuiz";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button, Dropdown, DropdownButton, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 import "./style.css";
+import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
+import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
+import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
 
 const Quizes = () => {
 
@@ -24,6 +27,18 @@ const Quizes = () => {
     const subject = JSON.parse(sessionStorage.getItem("Subject"));
     const [showModalUsers, setShowModalUsers] = useState(false);
     const [showModalResults, setShowModalResults] = useState(false);
+    const [bestGames, setBestGames] = useState([]);
+
+    const uniqueColumns = Array.from(
+        new Set(bestGames.flatMap((row) => Object.keys(row)))
+    );
+
+    // Generate column definitions dynamically
+    const columnDefs = uniqueColumns.map((column) => ({
+        headerName: column,
+        field: column,
+        filter: true
+    }));
 
 
     const tooltipSettings = (
@@ -112,6 +127,46 @@ const Quizes = () => {
         }
     }
 
+    useEffect(() => {
+        const getBestGames = async () => {
+            if (quizes.length === 0) {
+                return;
+            }
+
+            let quizIds = [];
+            quizes.forEach((quiz) => {
+                quizIds.push(quiz._id);
+            })
+            const response = await postRequest(`${baseUrl}/games/best-results-matrix`, JSON.stringify({ quizIds: quizIds }));
+
+            let matrix = [];
+            subject?.studentList.forEach((student) => {
+                matrix.push({
+                    name: student.name,
+                    index: student.email.split("@")[0]
+                });
+                let sum = 0;
+                response.forEach((quiz) => {
+                    if (!quiz) {
+                        return;
+                    }
+                    matrix[matrix.length - 1][quiz.quizName] = 0;
+                    quiz.students.forEach((quizStudent) => {
+                        if (student._id === quizStudent._id) {
+                            matrix[matrix.length - 1][quiz.quizName] = quizStudent.score;
+                            sum += quizStudent.score;
+                        }
+                    });
+                });
+                matrix[matrix.length - 1]["sum"] = sum;
+            });
+
+            setBestGames(matrix);
+        };
+
+        getBestGames();
+
+    }, [quizes]);
 
     return (
         <div>
@@ -197,12 +252,20 @@ const Quizes = () => {
                             </Button>
                         </Modal.Footer>
                     </Modal>
-                    <Modal show={showModalResults} onHide={() => setShowModalResults(false)}>
+                    <Modal show={showModalResults} onHide={() => setShowModalResults(false)} dialogClassName="results-modal">
                         <Modal.Header closeButton>
                             <Modal.Title>Results</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            Results placeholder
+                            <div
+                                className="ag-theme-quartz" // applying the grid theme
+                                style={{ height: 500 }} // the grid will fill the size of the parent container
+                            >
+                                <AgGridReact
+                                    rowData={bestGames}
+                                    columnDefs={columnDefs}
+                                />
+                            </div>
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={() => setShowModalResults(false)}>
