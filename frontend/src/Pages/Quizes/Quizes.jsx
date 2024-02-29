@@ -29,6 +29,7 @@ const Quizes = () => {
     const [showModalResults, setShowModalResults] = useState(false);
     const [bestGames, setBestGames] = useState([]);
     const gridRef = useRef();
+    const [isResultsScreen, setIsResultsScreen] = useState(true);
 
     const uniqueColumns = Array.from(
         new Set(bestGames.flatMap((row) => Object.keys(row)))
@@ -262,17 +263,40 @@ const Quizes = () => {
                             <Modal.Title>Results</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
-                            <button className="btn btn-secondary mb-2" onClick={onBtnExport}>Download CSV export file</button>
-                            <div
-                                className="ag-theme-quartz" // applying the grid theme
-                                style={{ height: 500 }} // the grid will fill the size of the parent container
-                            >
-                                <AgGridReact
-                                    rowData={bestGames}
-                                    columnDefs={columnDefs}
-                                    ref={gridRef}
-                                />
-                            </div>
+                            {
+                                isResultsScreen ?
+                                    <>
+                                        <div className="container">
+                                            <div className="row justify-content-between">
+                                                <button className="btn btn-secondary mb-2 col-md-3" onClick={onBtnExport}>Download CSV export file</button>
+                                                <button className="btn btn-primary mb-2 col-md-3" onClick={() => setIsResultsScreen((prev) => !prev)}>Compare to other years</button>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            className="ag-theme-quartz" // applying the grid theme
+                                            style={{ height: 500 }} // the grid will fill the size of the parent container
+                                        >
+                                            <AgGridReact
+                                                rowData={bestGames}
+                                                columnDefs={columnDefs}
+                                                ref={gridRef}
+                                            />
+                                        </div>
+                                    </> :
+                                    <>
+                                        <div className="container">
+                                            <div className="row justify-content-between">
+                                                <button className="btn btn-primary mb-2 col-md-3" onClick={() => setIsResultsScreen((prev) => !prev)}>Back</button>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            Barplot
+                                        </div>
+                                    </>
+                            }
+
                         </Modal.Body>
                         <Modal.Footer>
                             <Button variant="secondary" onClick={() => setShowModalResults(false)}>
