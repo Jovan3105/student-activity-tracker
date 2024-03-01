@@ -1,5 +1,5 @@
 const express = require("express");
-const { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId } = require("../Controllers/subjectController");
+const { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId, compareYearlyResults } = require("../Controllers/subjectController");
 
 const router = express.Router();
 
@@ -10,6 +10,7 @@ router.get("/available/:userId", getAvailableSubjects);
 router.get("/subscribed/:userId", getSubscribedSubjectsByUser);
 router.get("/subject/:quizId", getSubjectByQuizId);
 router.post("/subscribe/:subjectId/:userId", subscribeToSubject);
+router.post("/compareYearlyResults", compareYearlyResults);
 router.delete("/:id", deleteSubject);
 router.delete("/unsubscribe/:subjectId/:userId", unsubscribeToSubject);
 

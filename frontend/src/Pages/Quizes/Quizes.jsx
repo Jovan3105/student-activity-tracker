@@ -8,6 +8,7 @@ import "./style.css";
 import { AgGridReact } from 'ag-grid-react'; // AG Grid Component
 import "ag-grid-community/styles/ag-grid.css"; // Mandatory CSS required by the grid
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional Theme applied to the grid
+import { AgChartsReact } from 'ag-charts-react';
 
 const Quizes = () => {
 
@@ -41,6 +42,46 @@ const Quizes = () => {
         field: column,
         filter: true
     }));
+
+    const getChartData = async () => {
+        const response = await postRequest(`${baseUrl}/subjects/compareYearlyResults`, JSON.stringify(
+            {
+                subjectName: subject.name
+            }
+        )).then((value) => {
+            setShowModalResults(true);
+            const sorted = value.sort(function (a, b) {
+                const yearA = parseInt(a.year.split('/')[0], 10);
+                const yearB = parseInt(b.year.split('/')[0], 10);
+
+                return yearA - yearB;
+            })
+            setChartOptions(prev => (
+                {
+                    ...prev,
+                    ["data"]: sorted,
+                }
+            ));
+        });
+    }
+
+    const [chartOptions, setChartOptions] = useState({
+        title: {
+            text: "Average scores for " + subject.name + " by years",
+        },
+        autoSize: true,
+        // Data: Data to be displayed in the chart
+        data: [],
+        // Series: Defines which chart type and data to use
+        series: [
+            {
+                type: 'bar',
+                xKey: 'year',
+                yKey: 'averageScore',
+                yName: 'Average Score',
+            }
+        ]
+    });
 
 
     const tooltipSettings = (
@@ -212,7 +253,7 @@ const Quizes = () => {
                                 }
                                 variant="card" drop="end" size="sm" style={{ top: "3px" }}>
                                 <Dropdown.Item onClick={() => { setShowModalUsers(true) }}>Show subscribed students</Dropdown.Item>
-                                <Dropdown.Item onClick={() => { setShowModalResults(true) }}>Show results for all quizes</Dropdown.Item>
+                                <Dropdown.Item onClick={() => { getChartData() }}>Show results for all quizes</Dropdown.Item>
                                 <Dropdown.Divider />
                                 <Dropdown.Item style={{ color: "red" }} onClick={() => deleteSubject(subject._id)}>Delete</Dropdown.Item>
                             </DropdownButton>
@@ -291,8 +332,8 @@ const Quizes = () => {
                                             </div>
                                         </div>
 
-                                        <div>
-                                            Barplot
+                                        <div className="card">
+                                            <AgChartsReact options={chartOptions} />
                                         </div>
                                     </>
                             }

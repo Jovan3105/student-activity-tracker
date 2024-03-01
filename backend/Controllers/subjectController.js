@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Subject = require("../Models/subjectModel");
 const Quiz = require("../Models/quizModel");
+const Game = require("../Models/gameModel");
 
 const createSubject = async (req, res) => {
 
@@ -157,8 +158,54 @@ const getSubjectByQuizId = async (req, res) => {
     }
 }
 
+const compareYearlyResults = async (req, res) => {
+    const subjectName = req.body.subjectName;
+    try {
+        const subjects = await Subject.find({ name: subjectName });
+        //console.log(subjects)
+        const yearlyResults = [];
+
+
+        const calculateMeanScore = (results) => {
+            if (results.length === 0) {
+                return 0;
+            }
+
+            const totalScore = results.reduce((sum, result) => sum + result.score, 0);
+            return totalScore / results.length;
+        };
+
+        for (let i = 0; i < subjects.length; i++) {
+            const subject = subjects[i];
+            const quizes = await Quiz.find({ subjectId: subject._id });
+            let highestMeanScore = 0;
+            for (let j = 0; j < quizes.length; j++) {
+                const quiz = quizes[j];
+                const games = await Game.find({ quizId: quiz._id });
+                if (games.length === 0) {
+                    continue;
+                }
+                for (let k = 0; k < games.length; k++) {
+                    const game = games[k];
+                    const meanScore = calculateMeanScore(game.results);
+
+                    if (meanScore > highestMeanScore) {
+                        highestMeanScore = meanScore;
+                    }
+                }
+            }
+            yearlyResults.push({ year: subject.year, averageScore: highestMeanScore });
+        }
+
+        res.status(200).json(yearlyResults);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+}
 
 
 
 
-module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId };
+
+module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId, compareYearlyResults };
