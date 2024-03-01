@@ -15,6 +15,7 @@ const Subjects = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const navigate = useNavigate();
+    const user = JSON.parse(localStorage.getItem("User"));
 
     const changeSubjectProperties = (e) => {
         setSubjectData({ ...subjectData, [e.target.name]: e.target.value });
@@ -29,7 +30,8 @@ const Subjects = () => {
                 name: subjectData.name,
                 year: subjectData.year,
                 semester: subjectData.semester,
-                backgroundImage: subjectData.backgroundImage
+                backgroundImage: subjectData.backgroundImage,
+                creatorId: user._id
             }
         ))
     }
@@ -44,7 +46,7 @@ const Subjects = () => {
     }
 
     useEffect(() => {
-        const response = getRequest(`${baseUrl}/subjects`).then((value) => {
+        const response = getRequest(`${baseUrl}/subjects/byCreator/${user._id}`).then((value) => {
             //console.log(value);
             setSubjects(value);
             setFilteredData(value);
@@ -170,8 +172,8 @@ const Subjects = () => {
                                                         }
                                                     </div>
                                                     <div className="card-body">
-                                                        <div className="row bodyWrap">
-                                                            <h5 className="mb-3 textWrap">
+                                                        <div className="row">
+                                                            <h5 className="mb-3">
                                                                 {subject?.name + " " + subject?.year}
                                                             </h5>
                                                         </div>

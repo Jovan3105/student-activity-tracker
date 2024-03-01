@@ -9,7 +9,8 @@ const subjectSchema = new mongoose.Schema({
     ],
     studentList: [
         { type: mongoose.Schema.Types.ObjectId, ref: "User" }
-    ]
+    ],
+    creatorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
 }, {
     timestamps: true
 });

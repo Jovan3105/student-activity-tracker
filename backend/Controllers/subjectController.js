@@ -5,14 +5,15 @@ const Game = require("../Models/gameModel");
 
 const createSubject = async (req, res) => {
 
-    const { name, year, semester, backgroundImage } = req.body;
+    const { name, year, semester, backgroundImage, creatorId } = req.body;
 
     const subject = new Subject(
         {
             name,
             year,
             semester,
-            backgroundImage
+            backgroundImage,
+            creatorId
         }
     )
 
@@ -204,8 +205,20 @@ const compareYearlyResults = async (req, res) => {
     }
 }
 
+const getSubjectsByCreatorId = async (req, res) => {
+    const creatorId = req.params.creatorId;
+
+    try {
+        const response = await Subject.find({ creatorId: creatorId }).populate("studentList");
+        res.status(200).send(response);
+    } catch (error) {
+        res.status(500).json(error);
+    }
+}
 
 
 
 
-module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId, compareYearlyResults };
+
+
+module.exports = { createSubject, getSubject, getSubjects, deleteSubject, getAvailableSubjects, getSubscribedSubjectsByUser, subscribeToSubject, unsubscribeToSubject, getSubjectByQuizId, compareYearlyResults, getSubjectsByCreatorId };
