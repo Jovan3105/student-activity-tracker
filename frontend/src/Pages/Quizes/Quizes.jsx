@@ -96,7 +96,7 @@ const Quizes = () => {
 
 
     //console.log(quizData.questionList.length);
-    console.log(quizData);
+    //console.log(quizData);
     const submitQuiz = useCallback(async () => {
 
         if (quizData.description.length < 1) {
@@ -241,7 +241,7 @@ const Quizes = () => {
             <div className="row justify-content-center">
                 <div className="col-md-10">
                     <div className="d-flex justify-content-center">
-                        <h3 className="text-center">{subject.name + " " + subject.year}</h3> &nbsp;
+                        <h3 className="text-center" style={subject.isPractical ? { color: "red" } : { color: "" }} >{subject.name + " " + subject.year}</h3> &nbsp;
                         <OverlayTrigger placement="top" overlay={tooltipSettings}>
                             <DropdownButton
                                 title=

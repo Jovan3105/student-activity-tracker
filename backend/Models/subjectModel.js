@@ -10,7 +10,12 @@ const subjectSchema = new mongoose.Schema({
     studentList: [
         { type: mongoose.Schema.Types.ObjectId, ref: "User" }
     ],
-    creatorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+    creatorId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    creatorName: { type: String },
+    isPractical: { type: Boolean, default: false },
+    practicalSubjects: [
+        { type: mongoose.Schema.Types.ObjectId, ref: "Subject" }
+    ]
 }, {
     timestamps: true
 });

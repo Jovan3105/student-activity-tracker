@@ -9,18 +9,24 @@ const Subjects = () => {
         name: "",
         year: "",
         semester: "",
-        backgroundImage: ""
+        backgroundImage: "",
+        isPractical: false
     })
     const [subjects, setSubjects] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredData, setFilteredData] = useState([]);
     const navigate = useNavigate();
     const user = JSON.parse(localStorage.getItem("User"));
+    const [isChecked, setIsChecked] = useState(false);
 
     const changeSubjectProperties = (e) => {
         setSubjectData({ ...subjectData, [e.target.name]: e.target.value });
         //console.log(subjectData);
     }
+    const handleCheckboxChange = (e) => {
+        setIsChecked(!isChecked);
+        setSubjectData({ ...subjectData, [e.target.name]: e.target.checked });
+    };
 
     const handleSubmit = (e) => {
         //e.preventDefault();
@@ -31,7 +37,9 @@ const Subjects = () => {
                 year: subjectData.year,
                 semester: subjectData.semester,
                 backgroundImage: subjectData.backgroundImage,
-                creatorId: user._id
+                creatorId: user._id,
+                creatorName: user.name,
+                isPractical: subjectData.isPractical
             }
         ))
     }
@@ -47,9 +55,19 @@ const Subjects = () => {
 
     useEffect(() => {
         const response = getRequest(`${baseUrl}/subjects/byCreator/${user._id}`).then((value) => {
-            //console.log(value);
-            setSubjects(value);
-            setFilteredData(value);
+            // concating non-practical and practical subjects
+            const newSubjects = [];
+            for (let i = 0; i < value.length; i++) {
+                newSubjects.push(value[i]);
+                if (value[i]?.isPractical === false) {
+                    for (let j = 0; j < value[i]?.practicalSubjects.length; j++) {
+                        newSubjects.push(value[i]?.practicalSubjects[j]);
+                    }
+                }
+
+            }
+            setSubjects(newSubjects);
+            setFilteredData(newSubjects);
         });
 
         if (response.error) {
@@ -78,7 +96,7 @@ const Subjects = () => {
         navigate(`/${subject._id}/quizes`);
     }
 
-    //console.log(subjectData);
+    //console.log(subjects);
     return (
         <div>
             <div className="row justify-content-center">
@@ -94,6 +112,12 @@ const Subjects = () => {
                                         <div className="form-group">
                                             <label>Name:</label>
                                             <input type="text" className="form-control" placeholder="e.g. web programming 1" name="name" onChange={(e) => changeSubjectProperties(e)} />
+                                        </div>
+                                        <div className="form-group form-check my-2">
+                                            <label className="form-check-label">
+                                                Practical?
+                                            </label>
+                                            <input type="checkbox" className="form-check-input" id="checkboxInput" name="isPractical" checked={isChecked} onChange={(e) => handleCheckboxChange(e)} />
                                         </div>
                                         <div className="form-group my-2">
                                             <label>Year:</label>
@@ -182,6 +206,19 @@ const Subjects = () => {
                                                                 <i>Created at: {moment(subject.createdAt).calendar()}</i>
                                                             </small>
                                                         </div>
+                                                        {
+                                                            subject.isPractical &&
+                                                            <>
+                                                                <div className="row">
+                                                                    <small>
+                                                                        <i>By: {subject.creatorName}</i>
+                                                                    </small>
+                                                                </div>
+                                                                <div className="row">
+                                                                    <b style={{ color: "red" }}>Practical</b>
+                                                                </div>
+                                                            </>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>

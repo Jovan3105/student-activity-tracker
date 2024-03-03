@@ -6,7 +6,7 @@ const SubscribeSubject = () => {
     const user = JSON.parse(localStorage.getItem("User"));
     const [availableSubjects, setAvailableSubjects] = useState([]);
     const [subscribedSubjects, setSubscribedSubjects] = useState([]);
-    
+
     const [searchTermAvailable, setSearchTermAvailable] = useState('');
     const [filteredDataAvailable, setFilteredDataAvailable] = useState([]);
     const [searchTermSubscribed, setSearchTermSubscribed] = useState('');
@@ -35,7 +35,7 @@ const SubscribeSubject = () => {
     }, []);
 
     const cutText = (text) => {
-        let shortText = text.substring(0, 15);
+        let shortText = text.substring(0, 8);
 
         if (text.length > 15) {
             shortText = shortText + "...";
@@ -66,7 +66,7 @@ const SubscribeSubject = () => {
         setSearchTermAvailable(term);
 
         // Filter the data based on the search term
-        if (e.key === ' ' || e.key === 'Enter') {
+        if (e.key === ' ' || e.key === 84 || e.key === 'Enter') {
             const filtered = availableSubjects.filter(item =>
                 Object.values(item).some(value =>
                     value.toString().toLowerCase().includes(term.toLowerCase())
@@ -98,20 +98,12 @@ const SubscribeSubject = () => {
 
     return (
         <div className="h-100 align-items-center justify-content-center">
-            <div className="row justify-content-center gy-2">
-                <div className="col-md-12 col-lg-5 col-xxl-5">
-                    <input type="text" className="form-control " placeholder="Press Enter to search available subjects." onChange={handleSearchAvailable} onKeyUp={handleSearchAvailable} value={searchTermAvailable} />
-                </div>
-                <div className="col-md-12 col-lg-5 col-xxl-5">
-                    <input type="text" className="form-control " placeholder="Press Enter to search subscribed subjects." onChange={handleSearchSubscribed} onKeyUp={handleSearchSubscribed} value={searchTermSubscribed} />
-                </div>
-            </div>
-            <br></br>
             <div className="row gy-4 justify-content-center">
                 <div className="col-md-12 col-lg-5 col-xxl-5">
                     <div className="card">
                         <div className="card-header">
                             <h4 className="text-center">Available subjects</h4>
+                            <input type="text" className="form-control " placeholder="Press Enter to search available subjects." onChange={handleSearchAvailable} onKeyUp={handleSearchAvailable} value={searchTermAvailable} />
                         </div>
                         <div className="card-body custom-list-subjects overflow-auto">
                             {
@@ -120,7 +112,7 @@ const SubscribeSubject = () => {
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
-                                                    <h5>{cutText(subject.name)} - {subject.year}</h5>
+                                                    <h5>{cutText(subject.name)} - {subject.year} {subject.isPractical && <span style={{ color: "red" }}>&#42;</span>}</h5>
                                                     <button className="btn btn-primary flex-end" onClick={() => subscribeSubject(subject._id)}>Subscribe</button>
                                                 </div>
                                             </div>
@@ -138,6 +130,7 @@ const SubscribeSubject = () => {
                     <div className="card">
                         <div className="card-header">
                             <h4 className="text-center">My subjects</h4>
+                            <input type="text" className="form-control " placeholder="Press Enter to search subscribed subjects." onChange={handleSearchSubscribed} onKeyUp={handleSearchSubscribed} value={searchTermSubscribed} />
                         </div>
                         <div className="card-body custom-list-subjects overflow-auto">
                             {
@@ -146,7 +139,7 @@ const SubscribeSubject = () => {
                                         <div className="row justify-content-center mt-2" key={subject._id}>
                                             <div className="card">
                                                 <div className="d-flex justify-content-between p-2">
-                                                    <h5>{cutText(subject.name)} - {subject.year}</h5>
+                                                    <h5>{cutText(subject.name)} - {subject.year} {subject.isPractical && <span style={{ color: "red" }}>&#42;</span>}</h5>
                                                     <button className="btn btn-danger flex-end" onClick={() => unsubscribeSubject(subject._id)}>Unsubscribe</button>
                                                 </div>
                                             </div>
@@ -157,6 +150,15 @@ const SubscribeSubject = () => {
                                     </div>
                             }
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div className="row justify-content-center mb-3">
+                <div className="col-md-12 col-lg-2 col-xxl-2">
+                    <div className="card p-2 text-center">
+                        <p>
+                            <span style={{ color: "red" }}>&#42;</span> - practical subject.
+                        </p>
                     </div>
                 </div>
             </div>

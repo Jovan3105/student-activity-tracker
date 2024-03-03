@@ -4,26 +4,50 @@ const Quiz = require("../Models/quizModel");
 const Game = require("../Models/gameModel");
 
 const createSubject = async (req, res) => {
+    const { name, year, semester, backgroundImage, creatorId, creatorName, isPractical } = req.body;
 
-    const { name, year, semester, backgroundImage, creatorId } = req.body;
-
-    const subject = new Subject(
-        {
-            name,
-            year,
-            semester,
-            backgroundImage,
-            creatorId
-        }
-    )
+    const subject = new Subject({
+        name,
+        year,
+        semester,
+        backgroundImage,
+        creatorId,
+        creatorName,
+        isPractical
+    });
 
     try {
         await subject.save();
+
+
+        if (isPractical) {
+            const mainSubject = await Subject.findOne({
+                name,
+                year,
+                isPractical: false
+            });
+
+            if (mainSubject) {
+                const isAlreadyAdded = mainSubject.practicalSubjects.some((practicalSubject) =>
+                    practicalSubject.equals(subject._id)
+                );
+
+                if (!isAlreadyAdded) {
+                    mainSubject.practicalSubjects.push(
+                        subject._id,
+                    );
+
+                    await mainSubject.save();
+                }
+            }
+        }
+
         res.status(200).json(subject);
     } catch (error) {
+        console.log(error);
         res.status(500).json(error);
     }
-}
+};
 
 const getSubjects = async (req, res) => {
     try {
@@ -209,9 +233,29 @@ const getSubjectsByCreatorId = async (req, res) => {
     const creatorId = req.params.creatorId;
 
     try {
-        const response = await Subject.find({ creatorId: creatorId }).populate("studentList");
+        const response = await Subject.find({ creatorId: creatorId })
+            .populate("studentList")
+            .populate("creatorId")
+            .populate([
+                {
+                    path: "practicalSubjects",
+                    populate: {
+                        path: "studentList",
+                        model: "User"
+                    }
+                },
+                {
+                    path: "practicalSubjects",
+                    populate: {
+                        path: "creatorId",
+                        model: "User"
+                    }
+                },
+            ])// populate practical subjects from main subjects
+            .exec();
         res.status(200).send(response);
     } catch (error) {
+        console.log(error);
         res.status(500).json(error);
     }
 }
