@@ -2,74 +2,79 @@ const { Server } = require("socket.io");
 
 const io = new Server({ cors: "http://localhost:5173" });
 
-let game;
-let players = [];
-let scoreboard;
-let subject;
+// let game;
+// let players = [];
+// let scoreboard;
+// let subject;
+
+// Store active games in an object with pin as key
+let activeGames = new Map();
 
 io.on("connection", (socket) => {
     console.log("new connection", socket.id);
 
     socket.on("setupGame", (newGame, newScoreboard, newSubject) => {
-        socket.join(newGame.pin);
-        console.log("Host: " + socket.id + " Game: " + newGame.pin);
-        game = newGame;
-        scoreboard = newScoreboard;
-        players = [];
-        subject = newSubject;
+        const gameId = newGame.pin;
+        socket.join(gameId);
+        console.log("Host: " + socket.id + " Game: " + gameId);
+
+        activeGames.set(gameId, {
+            game: newGame,
+            scoreboard: newScoreboard,
+            players: [],
+            subject: newSubject
+        });
     });
 
     socket.on("addPlayer", (user, pin, callback) => {
-        //console.log(typeof (game.pin), typeof (pin));
-        if (!game) {
+        if (!activeGames.get(pin)) {
             callback("No active games.", user._id);
             return;
         }
-        if (game.pin == pin) {
 
-            if (!subject.studentList.includes(user._id)) {
-                //console.log(user._id);
-                callback("Subscribe to the subject before playing the game.", user._id);
-                return;
-            }
+        const game = activeGames.get(pin);
 
-            if (!players.some((player) => player._id === user._id)) {
-                players.push({ name: user.name, email: user.email, _id: user._id });
-                callback("Pass", game._id);
-            }
-            else {
-                callback("User already added.", user._id);
-                return;
-            }
+        if (!game.subject.studentList.includes(user._id)) {
+            callback("Subscribe to the subject before playing the game.", user._id);
+            return;
+        }
 
-            console.log(players)
-            //console.log("addPlayer true")
-            socket.join(game.pin);
-            let player = players.find((player) => player._id === user._id);
-            io.emit("addedPlayer", player);
+        if (!game.players.some((player) => player._id === user._id)) {
+            game.players.push({ name: user.name, email: user.email, _id: user._id });
+            callback("Pass", game.game._id);
         } else {
-            callback("No matching pin.", game._id);
+            callback("User already added.", user._id);
+            return;
+        }
+
+        socket.join(pin);
+        let player = game.players.find((player) => player._id === user._id);
+        io.to(pin).emit("addedPlayer", player);
+    });
+
+    socket.on("startGame", (pin) => {
+        if (activeGames.get(pin)) {
+            console.log("Game " + pin + " is started");
+            io.to(pin).emit("redirectPlayers", activeGames.get(pin).game._id);
         }
     });
 
-    socket.on("startGame", () => {
-        console.log("Game " + game.pin + " is started");
-        socket.to(game.pin).emit("redirectPlayers", game._id);
-    })
-
     // Signal that host sends. Starts the countdown before the questions shows
-    socket.on("questionCountdown", (callback) => {
+    socket.on("questionCountdown", (pin, callback) => {
         callback();
-        socket.to(game.pin).emit("questionCountdownFromHost");
+        socket.to(pin).emit("questionCountdownFromHost");
     });
 
     // Signal that host sends. Starts the countdown during the questions
-    socket.on("questionCountdownForPlayer", (time, question) => {
-        socket.to(game.pin).emit("questionCountdownForPlayerFromHost", time, question);
+    socket.on("questionCountdownForPlayer", (pin, time, question) => {
+        socket.to(pin).emit("questionCountdownForPlayerFromHost", time, question);
     })
 
-    socket.on("gameOver", () => {
-        socket.to(game.pin).emit("gameOverFromHost");
+    socket.on("gameOver", (pin) => {
+        if (activeGames.get(pin)) {
+            io.to(pin).emit("gameOverFromHost");
+            activeGames.delete(pin);
+        }
     })
 
 });

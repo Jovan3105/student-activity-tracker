@@ -93,9 +93,9 @@ const Host = () => {
     }
 
     const startGame = async () => {
-        socket.emit("startGame");
+        socket.emit("startGame", gameData.pin);
         await sleep(500);
-        socket.emit("questionCountdown", () => {
+        socket.emit("questionCountdown", gameData.pin, () => {
             startHostCountdown(5, currentQuestionId);
         });
         setIsGameStarted((prev) => !prev);
@@ -138,7 +138,7 @@ const Host = () => {
                     setIsTimerScreen(false)
                     //console.log("isQuestionScreen", isQuestionScreen)
                     setIsScoreboardScreen(true);
-                    socket.emit("gameOver");
+                    socket.emit("gameOver", gameData.pin);
                     return;
                 }
                 else {
@@ -157,7 +157,7 @@ const Host = () => {
         startCountdown(seconds,
             (time) => setTimer(time),
             () => {
-                socket.emit("questionCountdown", () => {
+                socket.emit("questionCountdown", gameData.pin, () => {
                     startHostCountdown(5, index);
                 })
             },
@@ -172,7 +172,7 @@ const Host = () => {
         let time = quizData.questionList[index].answerTime;
 
         setTimer(time);
-        socket.emit("questionCountdownForPlayer", time, {
+        socket.emit("questionCountdownForPlayer", gameData.pin, time, {
             answerList: quizData.questionList[index].answerList,
             questionIndex: quizData.questionList[index].questionIndex
         });
