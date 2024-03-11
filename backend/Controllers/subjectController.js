@@ -219,7 +219,7 @@ const compareYearlyResults = async (req, res) => {
                     }
                 }
             }
-            yearlyResults.push({ year: subject.year, averageScore: highestMeanScore });
+            yearlyResults.push({ year: subject.year, averageScore: highestMeanScore, isPractical: subject.isPractical });
         }
 
         res.status(200).json(yearlyResults);

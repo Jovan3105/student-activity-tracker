@@ -49,6 +49,7 @@ const Quizes = () => {
                 subjectName: subject.name
             }
         )).then((value) => {
+            //console.log(value)
             setShowModalResults(true);
             const sorted = value.sort(function (a, b) {
                 const yearA = parseInt(a.year.split('/')[0], 10);
@@ -56,10 +57,33 @@ const Quizes = () => {
 
                 return yearA - yearB;
             })
+            const newSorted = [];
+            sorted.forEach((element) => {
+                let flag = false;
+                newSorted.forEach((newElement) => {
+                    if (newElement.year === element.year) {
+                        if (element.isPractical) {
+                            newElement.numPractical += element.averageScore;
+                        }
+                        else {
+                            newElement.numNonPractical += element.averageScore;
+                        };
+                        flag = true;
+                        return;
+                    }
+                });
+                if (!flag) {
+                    newSorted.push({
+                        year: element.year,
+                        numPractical: element.isPractical ? element.averageScore : 0,
+                        numNonPractical: element.isPractical ? 0 : element.averageScore
+                    });
+                }
+            });
             setChartOptions(prev => (
                 {
                     ...prev,
-                    ["data"]: sorted,
+                    ["data"]: newSorted,
                 }
             ));
         });
@@ -69,6 +93,9 @@ const Quizes = () => {
         title: {
             text: "Average scores for " + subject.name + " by years",
         },
+        subtitle: {
+            text: subject.year
+        },
         autoSize: true,
         // Data: Data to be displayed in the chart
         data: [],
@@ -77,8 +104,16 @@ const Quizes = () => {
             {
                 type: 'bar',
                 xKey: 'year',
-                yKey: 'averageScore',
-                yName: 'Average Score',
+                yKey: 'numNonPractical',
+                yName: 'Non-Practical',
+                stackGroup: 'Non-Practical'
+            },
+            {
+                type: 'bar',
+                xKey: 'year',
+                yKey: 'numPractical',
+                yName: 'Practical',
+                stackGroup: 'Practical'
             }
         ]
     });
