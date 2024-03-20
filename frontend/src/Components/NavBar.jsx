@@ -26,8 +26,8 @@ const NavBar = () => {
                             {
                                 user ? (
                                     <Stack direction="vertical" gap={4}>
-                                        {user?.role === 0 ? <NavDropdown.Item href="/quizes">
-                                            Quizes
+                                        {user?.role === 0 ? <NavDropdown.Item href="/subjects">
+                                            Subjects
                                         </NavDropdown.Item> : ""}
                                         {user?.role === 1 ?
                                             <>

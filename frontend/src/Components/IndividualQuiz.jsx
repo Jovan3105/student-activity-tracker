@@ -109,7 +109,7 @@ const IndividualQuiz = ({ quiz }) => {
 
                     <div className="col-md-2 d-flex align-items-top mt-3">
                         <DropdownButton title="Dropdown" variant="secondary" drop="end">
-                            <Dropdown.Item onClick={startGame}>Start Game</Dropdown.Item>
+                            <Dropdown.Item onClick={startGame}>Initialize game</Dropdown.Item>
                             <Dropdown.Item onClick={modifyQuiz}>Modify</Dropdown.Item>
                             <Dropdown.Item onClick={() => showAllGames(quiz._id)}>Show All Games</Dropdown.Item>
                             <Dropdown.Divider />
